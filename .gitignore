@@ -4,3 +4,7 @@ dist
 
 # docker stuff
 local_data_psql
+
+# prisma stuff
+
+prisma/migrations
