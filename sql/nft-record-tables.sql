@@ -3,11 +3,14 @@ CREATE TABLE IF NOT EXISTS collections (
     token_name VARCHAR(100) NOT NULL,
     current_supply INT NOT NULL,
     max_supply INT NOT NULL,
-    royalty_fee DECIMAL NOT NULL,
-    royalty_collector VARCHAR(64) NOT NULL,
+    royalty_fee DECIMAL[] NOT NULL DEFAULT '{}',
+    royalty_collector BIGINT[] NOT NULL DEFAULT '{}',
+    royalty_fallback_fee_amount BIGINT[] NOT NULL DEFAULT '{}',
+    royalty_fallback_fee_token BIGINT[] NOT NULL DEFAULT '{}',
     freeze_key BOOLEAN NOT NULL DEFAULT false,
     wipe_key BOOLEAN NOT NULL DEFAULT false,
     supply_key BOOLEAN NOT NULL DEFAULT false,
+    last_synced TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (token_id)
 );
 
@@ -44,3 +47,7 @@ CREATE TABLE IF NOT EXISTS nft_additional_files (
 );
 
 -- TODO: reference nft table, or set a contraint that token_id and serial_id must exist for an entry into nft_additional_files.
+
+CREATE TABLE IF NOT EXISTS platform_metrics(
+    mirror_node_api_request BIGINT NOT NULL DEFAULT 0
+);

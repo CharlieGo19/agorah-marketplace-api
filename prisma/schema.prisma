@@ -8,16 +8,19 @@ datasource db {
 }
 
 model collections {
-  token_id          BigInt  @id
-  token_name        String  @db.VarChar(100)
-  current_supply    Int
-  max_supply        Int
-  royalty_fee       Decimal @db.Decimal
-  royalty_collector String  @db.VarChar(64)
-  freeze_key        Boolean @default(false)
-  wipe_key          Boolean @default(false)
-  supply_key        Boolean @default(false)
-  nft               nft[]
+  token_id                    BigInt    @id
+  token_name                  String    @db.VarChar(100)
+  current_supply              Int
+  max_supply                  Int
+  royalty_fee                 Decimal[] @default([]) @db.Decimal
+  royalty_collector           BigInt[]  @default([])
+  freeze_key                  Boolean   @default(false)
+  wipe_key                    Boolean   @default(false)
+  supply_key                  Boolean   @default(false)
+  last_synced                 DateTime  @default(now()) @db.Timestamp(6)
+  royalty_fallback_fee_amount BigInt[]  @default([])
+  royalty_fallback_fee_token  BigInt[]  @default([])
+  nft                         nft[]
 }
 
 model nft {
@@ -47,4 +50,11 @@ model nft_additional_files {
   additional_nft_file_metadata_uri String? @db.VarChar(1024)
 
   @@id([token_id, serial_id, file_index])
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model platform_metrics {
+  mirror_node_api_request BigInt @default(0)
+
+  @@ignore
 }

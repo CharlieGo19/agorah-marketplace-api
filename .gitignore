@@ -6,5 +6,4 @@ dist
 local_data_psql
 
 # prisma stuff
-
-prisma/migrations
+prisma
