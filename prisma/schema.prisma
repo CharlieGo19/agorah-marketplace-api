@@ -10,16 +10,17 @@ datasource db {
 model collections {
   token_id                    BigInt    @id
   token_name                  String    @db.VarChar(100)
+  token_symbol                String    @db.VarChar(100)
   current_supply              Int
   max_supply                  Int
   royalty_fee                 Decimal[] @default([]) @db.Decimal
   royalty_collector           BigInt[]  @default([])
+  royalty_fallback_fee_amount BigInt[]  @default([])
+  royalty_fallback_fee_token  BigInt[]  @default([])
   freeze_key                  Boolean   @default(false)
   wipe_key                    Boolean   @default(false)
   supply_key                  Boolean   @default(false)
   last_synced                 DateTime  @default(now()) @db.Timestamp(6)
-  royalty_fallback_fee_amount BigInt[]  @default([])
-  royalty_fallback_fee_token  BigInt[]  @default([])
   nft                         nft[]
 }
 
@@ -29,7 +30,7 @@ model nft {
   nft_name             String?     @db.VarChar(512)
   nft_creator          String?     @db.VarChar(128)
   nft_description      String?
-  nft_file             String?     @db.VarChar(1024)
+  nft_file             String      @db.VarChar(1024)
   nft_file_checksum    String?     @db.VarChar(64)
   nft_additional_files Boolean     @default(false)
   nft_properties       String?

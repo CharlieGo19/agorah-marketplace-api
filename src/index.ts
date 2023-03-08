@@ -7,7 +7,8 @@ import { PrismaClient } from "@prisma/client";
 import { Env } from "./utils/startup";
 import rootRouter from "./routes/root";
 import collectionRouter from "./routes/collection";
-import { errorHandler } from "./utils/error.handler";
+import { errorHandler, MirrorNodeError } from "./utils/error.handler";
+import nftsRouter from "./routes/nfts";
 
 dotenv.config();
 // TODO: Setup TLS certs.
@@ -18,7 +19,14 @@ export const env: Env = new Env();
 export const prisma: PrismaClient = new PrismaClient(); // TODO: Configure logging.
 
 const app: Express = express();
-const port: string | undefined = env.GetExpressApiPort(); // TODO: get from startup
+const port: string | undefined = env.GetExpressApiPort();
+
+// The BigInt fix below is to allow us to send prisma JSON objects via res.json();
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+BigInt.prototype.toJSON = function () {
+	return this.toString();
+};
 
 app.use(cors());
 app.use(Helmet());
@@ -28,8 +36,9 @@ app.disable("x-powered-by");
 app.use("/", rootRouter);
 app.use("/api/v0/", rootRouter);
 app.use("/api/v0/", collectionRouter);
+app.use("/api/v0/", nftsRouter);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error | MirrorNodeError, req: Request, res: Response, next: NextFunction) => {
 	errorHandler(err, req, res, next);
 });
 

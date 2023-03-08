@@ -1,7 +1,7 @@
 import { AxiosResponseNftCollection } from "../controllers/collection.interface";
 import { env } from "../index";
 import axios from "axios";
-import { ResolveMirrorNodeError } from "./error.handler";
+import { ResolveMirrorError } from "./error.handler";
 
 export class MirrorNode {
 	#axiosConfig = {
@@ -11,16 +11,32 @@ export class MirrorNode {
 		baseURL: env.GetMirrorBaseUrlI(),
 	};
 
-	async MirrorRequestTokenInfo(tokenId: bigint): Promise<AxiosResponseNftCollection | undefined> {
+	async MirrorRequestTokenInfo(
+		collectionId: bigint
+	): Promise<AxiosResponseNftCollection | undefined> {
 		try {
-			const tokenIdFull = `0.0.${tokenId}`;
+			const collectionIdFull = `0.0.${collectionId}`;
 			const getData = await axios.get<AxiosResponseNftCollection>(
-				`/tokens/${tokenIdFull}/`,
+				`/tokens/${collectionIdFull}/`,
 				this.#axiosConfig
 			);
 			return getData.data;
-		} catch (e) {
-			ResolveMirrorNodeError(e);
+		} catch (err) {
+			ResolveMirrorError(err);
+		}
+	}
+
+	async MirrorRequestNfts(collectionId: bigint, from: number, to: number) {
+		const limit: number = to - from + 1;
+		try {
+			const collectionIdFull = `0.0.${collectionId}`;
+			const getData = await axios.get(
+				`/tokens/${collectionIdFull}/nfts?limit=${limit}&order=asc&serialnumber=gte%3A${from}`,
+				this.#axiosConfig
+			);
+			return getData.data;
+		} catch (err) {
+			ResolveMirrorError(err);
 		}
 	}
 }

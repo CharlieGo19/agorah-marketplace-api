@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS collections (
     token_id BIGINT NOT NULL UNIQUE,
     token_name VARCHAR(100) NOT NULL,
+    token_symbol VARCHAR(100) NOT NULL,
     current_supply INT NOT NULL,
     max_supply INT NOT NULL,
     royalty_fee DECIMAL[] NOT NULL DEFAULT '{}',
@@ -23,7 +24,7 @@ CREATE TABLE IF NOT EXISTS nft (
     nft_name VARCHAR(512),
     nft_creator VARCHAR(128),
     nft_description TEXT,
-    nft_file VARCHAR(1024),
+    nft_file VARCHAR(1024) NOT NULL,
     nft_file_checksum VARCHAR(64),
     nft_additional_files BOOLEAN NOT NULL DEFAULT false,
     nft_properties TEXT,

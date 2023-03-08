@@ -2,8 +2,10 @@ export class Env {
 	#expressApiPort: string;
 	#mirrorProviderApiKeyI: string;
 	#mirrorProviderRestApiI: string;
+	#nftRequestRangeLimit: number;
 	#enableStackTrace: boolean;
 	#enableUserInputErrorTrace: boolean;
+	#enableIpfsErrorTrace: boolean;
 
 	constructor() {
 		const dateTime: string = new Date().toUTCString();
@@ -34,6 +36,15 @@ export class Env {
 			this.#mirrorProviderRestApiI = process.env.MIRROR_NODE_PROVIDER_REST_API_I;
 		}
 
+		if (!process.env.NFT_REQUEST_RANGE_LIMIT) {
+			console.log(
+				`${dateTime} NFT_REQUEST_RANGE_LIMIT UNDEFINED: Settings conservative default of 30.`
+			);
+			this.#nftRequestRangeLimit = 30;
+		} else {
+			this.#nftRequestRangeLimit = Number(process.env.NFT_REQUEST_RANGE_LIMIT);
+		}
+
 		if (!process.env.ENABLE_ERROR_STACK_TRACE) {
 			console.log(
 				`${dateTime} ENABLE_ERROR_STACK_TRACE UNDEFINED: Settings sensible default of FALSE.`
@@ -59,8 +70,21 @@ export class Env {
 				this.#enableUserInputErrorTrace = false;
 			}
 		}
-	}
 
+		if (!process.env.ENABLE_IPFS_ERROR_TRACE) {
+			console.log(
+				`${dateTime} ENABLE_IPFS_ERROR_TRACE UNDEFINED: Settings sensible default of FALSE.`
+			);
+			this.#enableIpfsErrorTrace = false;
+		} else {
+			if (process.env.ENABLE_IPFS_ERROR_TRACE === "true") {
+				this.#enableIpfsErrorTrace = true;
+			} else {
+				this.#enableIpfsErrorTrace = false;
+			}
+		}
+	}
+	//
 	GetExpressApiPort(): string {
 		return this.#expressApiPort;
 	}
@@ -72,11 +96,19 @@ export class Env {
 		return this.#mirrorProviderRestApiI;
 	}
 
+	GetNftRequestRangeLimit(): number {
+		return this.#nftRequestRangeLimit;
+	}
+
 	GetEnableErrorStackTrace(): boolean {
 		return this.#enableStackTrace;
 	}
 
 	GetEnableUserInputErrorInputTrace(): boolean {
 		return this.#enableUserInputErrorTrace;
+	}
+
+	GetEnableIpfsErrorInputTrace(): boolean {
+		return this.#enableIpfsErrorTrace;
 	}
 }

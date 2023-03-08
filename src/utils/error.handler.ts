@@ -1,5 +1,5 @@
 import { collections, Prisma } from "@prisma/client";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Request, Response, NextFunction } from "express";
 import { env } from "..";
 import { GetCollectionInformationFromMirror } from "../controllers/collection.controller";
@@ -21,10 +21,27 @@ import {
 	RESPONSE_BAD_PARAM_REFUSED,
 	RESPONSE_UNEXPECTED_ERROR,
 	RESPONSE_MIRROR_NODE_SERVICE_DOWN,
+	AGORAH_ERROR_CODE_A1001,
+	AGORAH_ERROR_MESSAGE_A1001,
+	AGORAH_ERROR_CODE_A1002,
+	AGORAH_ERROR_MESSAGE_A1002,
+	AGORAH_ERROR_MESSAGE_A0000,
+	AGORAH_ERROR_MESSAGE_A1003,
+	AGORAH_ERROR_CODE_A1003,
+	AXIOS_400_IPFS_REQUEST,
+	AXIOS_404_IPFS_REQUEST,
+	AXIOS_DEFAULT_IPFS_ERROR,
+	RESPONSE_IPFS_SERVICE_DOWN,
+	METADATA_NO_PARSABLE_IMAGE,
 } from "./constants";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function errorHandler(err: Error, _req: Request, res: Response, next: NextFunction) {
+export function errorHandler(
+	err: Error | AxiosError,
+	_req: Request,
+	res: Response,
+	_next: NextFunction
+) {
 	if (err instanceof PrismaError) {
 		console.log("%s: PRISMA ERROR - %s, %s.", new Date().toUTCString(), err.code, err.message);
 		switch (err.code) {
@@ -40,9 +57,7 @@ export function errorHandler(err: Error, _req: Request, res: Response, next: Nex
 		switch (err.code) {
 			case 400:
 			case 404:
-				if (env.GetEnableUserInputErrorInputTrace()) {
-					console.log("%s: MIRROR NODE ERROR - %s, %s.", new Date().toUTCString());
-				}
+				WriteUserInputTrace("MIRROR NODE ERROR", err);
 				res.status(404).json({
 					status: 404,
 					error: RESPONSE_TOKEN_NOT_FOUND,
@@ -51,7 +66,7 @@ export function errorHandler(err: Error, _req: Request, res: Response, next: Nex
 			case 0:
 				console.log(
 					"%s: MIRROR NODE ERROR - %s, %s",
-					new Date().toUTCString,
+					new Date().toUTCString(),
 					err.code,
 					err.message
 				);
@@ -59,6 +74,38 @@ export function errorHandler(err: Error, _req: Request, res: Response, next: Nex
 					status: 503,
 					error: RESPONSE_MIRROR_NODE_SERVICE_DOWN,
 				});
+				break;
+		}
+	} else if (err instanceof IpfsError) {
+		switch (err.code) {
+			case 0:
+				WriteIpfsTrace("IPFS ERROR", err);
+				res.status(501).json({
+					status: 501,
+					error: METADATA_NO_PARSABLE_IMAGE,
+				});
+				break;
+			case 400:
+			case 404:
+				WriteIpfsTrace("IPFS ERROR", err);
+				res.status(503).json({
+					status: 503,
+					error: RESPONSE_IPFS_SERVICE_DOWN,
+				});
+				break;
+		}
+	} else if (err instanceof AgorahError) {
+		switch (err.code) {
+			case AGORAH_ERROR_CODE_A1001:
+			case AGORAH_ERROR_CODE_A1002:
+			case AGORAH_ERROR_CODE_A1003:
+				WriteUserInputTrace("AGORAH ERROR", err);
+				res.status(418).json({
+					status: 418,
+					error: err.message,
+				});
+				break;
+			//TODO: Do a default.
 		}
 	} else {
 		console.log("%s: UNKNOWN ERROR - %s.", new Date().toUTCString(), err.message);
@@ -69,7 +116,8 @@ export function errorHandler(err: Error, _req: Request, res: Response, next: Nex
 	}
 
 	if (env.GetEnableErrorStackTrace()) {
-		console.log("stack: ", err.stack);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		console.log("ERROR CODE: %s - %s", (err as any).code, err.stack);
 	}
 }
 
@@ -97,7 +145,20 @@ export async function ResolvePrismaError(
 	if (err instanceof Prisma.PrismaClientKnownRequestError) {
 		switch (err.code) {
 			case PRISMA_ERROR_CODE_P2002:
-				throw new PrismaError(err.code, PRISMA_CREATE_FAILURE_TOKEN_EXISTS, err.stack);
+				if (tokenId !== null) {
+					// Trying to insert into collections which shouldn't be getting hit... So throw err.
+					throw new PrismaError(err.code, PRISMA_CREATE_FAILURE_TOKEN_EXISTS, err.stack);
+				} else {
+					// Updating database with missing NFT's... Might have happened if someone early on went
+					// rogue doing api requests and missing out parts of sequence i.e. 1-10 12-22.
+					console.log(
+						"%s: PRISMA ERROR - %s, %s.",
+						new Date().toUTCString(),
+						err.code,
+						"possible cause: filling in incomplete data"
+					);
+				}
+				break;
 			case PRISMA_ERROR_CODE_P2025: {
 				const collection: collections | undefined =
 					await GetCollectionInformationFromMirror(tokenId as bigint);
@@ -144,18 +205,106 @@ export class MirrorNodeError extends Error {
 	}
 }
 
-export function ResolveMirrorNodeError(err: unknown) {
+export function ResolveMirrorError(err: unknown) {
 	if (axios.isAxiosError(err)) {
 		switch (err.response?.status) {
 			case 400:
 				throw new MirrorNodeError(400, AXIOS_400_MIRROR_NODE_REQUEST, err.stack);
 			case 404:
-				throw new MirrorNodeError(400, AXIOS_404_MIRROR_NODE_REQUEST, err.stack);
+				throw new MirrorNodeError(404, AXIOS_404_MIRROR_NODE_REQUEST, err.stack);
 			default:
 				throw new MirrorNodeError(0, AXIOS_DEFAULT_MIRROR_NODE_ERROR, err.stack);
 		}
 	} else {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		throw new MirrorNodeError(0, MIRROR_NODE_REQUEST_UNCAUGHT_ERROR, (err as any).stack);
+	}
+}
+
+export class IpfsError extends Error {
+	code: number;
+
+	constructor(code: number, message: string, stack: string | undefined) {
+		super(message);
+		this.stack = stack;
+		this.code = code;
+	}
+}
+
+export function ResolveIpfsError(err: unknown) {
+	if (axios.isAxiosError(err)) {
+		switch (err.response?.status) {
+			case 400:
+				throw new IpfsError(400, AXIOS_400_IPFS_REQUEST, err.stack);
+			case 404:
+				throw new IpfsError(404, AXIOS_404_IPFS_REQUEST, err.stack);
+			default:
+				throw new IpfsError(0, AXIOS_DEFAULT_IPFS_ERROR, err.stack);
+		}
+	}
+}
+
+export class AgorahError extends Error {
+	code: string;
+
+	constructor(code: string, message: string, stack: string | undefined) {
+		super(message);
+		this.stack = stack;
+		this.code = code;
+	}
+}
+
+// This Resolver works different to the rest as its a native error system.
+/**
+ *
+ * @param err
+ * @param errCode
+ */
+export function ResolveAgorahError(err: Error) {
+	switch (err.name) {
+		case "SyntaxError": {
+			if (err.message.includes("NaN")) {
+				throw new AgorahError(
+					AGORAH_ERROR_CODE_A1002,
+					AGORAH_ERROR_MESSAGE_A1002,
+					err.stack
+				);
+			} else {
+				throw new AgorahError(
+					AGORAH_ERROR_CODE_A1001,
+					AGORAH_ERROR_MESSAGE_A1001,
+					err.stack
+				);
+			}
+		}
+		case "TypeError":
+			throw new AgorahError(AGORAH_ERROR_CODE_A1001, AGORAH_ERROR_MESSAGE_A1001, err.stack);
+		case "Error":
+			if (err.message === AGORAH_ERROR_MESSAGE_A1003) {
+				throw new AgorahError(
+					AGORAH_ERROR_CODE_A1003,
+					AGORAH_ERROR_MESSAGE_A1003,
+					err.stack
+				);
+			}
+			break;
+		default:
+			throw new AgorahError(
+				AGORAH_ERROR_MESSAGE_A0000,
+				AGORAH_ERROR_MESSAGE_A0000,
+				err.stack
+			);
+	}
+}
+
+function WriteUserInputTrace(type: string, err: AgorahError | PrismaError | MirrorNodeError) {
+	if (env.GetEnableUserInputErrorInputTrace()) {
+		console.log("%s: %s - %s, %s.", new Date().toUTCString(), type, err.code, err.message);
+	}
+}
+
+function WriteIpfsTrace(type: string, err: AgorahError | PrismaError | MirrorNodeError) {
+	if (env.GetEnableIpfsErrorInputTrace()) {
+		console.log("%s: %s - %s, %s.", new Date().toUTCString(), type, err.code, err.message);
 	}
 }

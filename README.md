@@ -9,3 +9,9 @@ When first pulling this repo:
 1. docker compose up : this will create database & tables.
 2. npx prisma db pull : this will create schemas for prisma based on 1.
 3. npx generate client : this will generate client based on 2.
+
+# Potential Bugs:
+
+What happens when token is infinate? Set hard limit to what we will store.
+
+# TODO

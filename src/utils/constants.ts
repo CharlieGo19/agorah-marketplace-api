@@ -22,9 +22,36 @@ export const AXIOS_DEFAULT_MIRROR_NODE_ERROR = "something went wrong requesting 
 // Mirror Node Errors (Non-axios)
 export const MIRROR_NODE_REQUEST_UNCAUGHT_ERROR = "internal error, non axios related.";
 
+// Axios Request Errors (IPFS)
+export const AXIOS_400_IPFS_REQUEST = "could not resolve metadata from ipfs";
+export const AXIOS_404_IPFS_REQUEST = "could not find metadata on ipfs";
+export const AXIOS_DEFAULT_IPFS_ERROR = "something went wrong requesting data from ipfs";
+
+// Metadata Errors
+export const METADATA_NO_PARSABLE_IMAGE =
+	"could not understand metadata associated with request, please @AGORAH staff with metadata link";
+
+// Agorah Error Codes
+//Notes: A - Agorah, Digit One - Series, i.e. 1xx is input Digit Two, Three and Four - Error Serie.
+export const AGORAH_ERROR_CODE_A0000 = "A0000";
+export const AGORAH_ERROR_CODE_A1001 = "A1001";
+export const AGORAH_ERROR_CODE_A1002 = "A1002";
+export const AGORAH_ERROR_CODE_A1003 = "A1003";
+
+// Agorah Error Messages
+export const AGORAH_ERROR_MESSAGE_A0000 = "unexpected error, please contact @AGORAH";
+export const AGORAH_ERROR_MESSAGE_A1001 = "invalid token id provided";
+export const AGORAH_ERROR_MESSAGE_A1002 = "range either too big or exceeds series";
+export const AGORAH_ERROR_MESSAGE_A1003 = "invalied series range";
+
 // API Response Messages
 export const RESPONSE_BAD_PARAM_REFUSED = "BAD INPUT, SERVER REFUSED TO PROCESS";
 export const RESPONSE_TOKEN_NOT_FOUND = "TOKEN REQUEST FAILED, TOKEN DOES NOT EXIST";
 export const RESPONSE_MIRROR_NODE_SERVICE_DOWN =
 	"INTERNAL ERROR, MIRROR NODE SERVICE DID NOT PROVIDE VALID RESPONSE";
+export const RESPONSE_IPFS_SERVICE_DOWN =
+	"INTERNAL ERROR, IPFS SERVICE DID NOT PROVIDE VALID RESPONSE";
 export const RESPONSE_UNEXPECTED_ERROR = "UNKNOWN SERVER ERROR, PLEASE @ AGORAH STAFF";
+
+// Misc
+export const AGORAH_ERROR_PLACEHOLDER_IMAGE = "https://agorah.io";

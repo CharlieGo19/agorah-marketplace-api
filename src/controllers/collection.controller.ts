@@ -24,7 +24,6 @@ export async function GetCollection(tokenId: bigint): Promise<collections | unde
 	}
 }
 
-// TODO: Also throw error
 /**
  *
  * @param tokenId
@@ -50,8 +49,9 @@ export async function GetCollectionInformationFromMirror(
 		);
 
 		royalty_collectors.push(BigInt(returnedFee.collector_account_id.split(".")[2]));
+
 		// if fallback does not exist, default 0, if token is null, set to 0 also, then in frontend set to hbar
-		if (returnedFee.fallback_fee !== null || returnedFee.fallback_fee !== undefined) {
+		if (returnedFee.fallback_fee !== null && returnedFee.fallback_fee !== undefined) {
 			royalty_fallback_fee_amounts.push(BigInt(returnedFee.fallback_fee?.amount as number));
 
 			if (
@@ -72,6 +72,7 @@ export async function GetCollectionInformationFromMirror(
 	const nftCollection: collections = {
 		token_id: BigInt(nftReturnData.token_id.split(".")[2]),
 		token_name: nftReturnData.name,
+		token_symbol: nftReturnData.symbol,
 		current_supply: Number(nftReturnData.total_supply),
 		max_supply: Number(nftReturnData.max_supply),
 		royalty_fee: royalty_fees,
