@@ -22,7 +22,7 @@ export async function GetNftPreviewsRange(
 	collectionIdInput: string,
 	nftSerialRangeFromInput: string,
 	nftSerialRangeToInput: string
-) {
+): Promise<nft[] | undefined> {
 	try {
 		const collectionId = BigInt(collectionIdInput.split(".")[2]);
 		const nftSerialRangeFrom = Number(nftSerialRangeFromInput);
@@ -105,14 +105,12 @@ export async function GetNftPreviewsRange(
 				} catch (err: unknown) {
 					ResolvePrismaError(err, null);
 				}
-				console.log("Here?");
 			}
 		} else {
 			// we're here because the collection information indicates an incomplete set, and may need updating
 			// and that we're at the fringe of our knowledge. This is not perfect solution.
 			// TODO: Implement last_synced check to remove the need for this.
 			const expectedSetSize = collection.current_supply - nftSerialRangeFrom;
-			console.log(expectedSetSize);
 			const nfts: AxiosResponseNftSerials = await new MirrorNode().MirrorRequestNfts(
 				collectionId,
 				nftSerialRangeFrom,

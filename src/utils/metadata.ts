@@ -1,4 +1,5 @@
 import { nft } from "@prisma/client";
+import { env } from "..";
 import { FuzzyToken } from "../controllers/nft.interface";
 import { AGORAH_ERROR_PLACEHOLDER_IMAGE, METADATA_NO_PARSABLE_IMAGE } from "./constants";
 import { IpfsError } from "./error.handler";
@@ -30,7 +31,10 @@ export function FuzzyTokenParser(
 
 	if (metadata.image !== undefined) {
 		if (metadata.image.includes("ipfs://")) {
-			nftTableMetadata.nft_file = metadata.image.replace("ipfs://", "");
+			nftTableMetadata.nft_file = metadata.image.replace(
+				"ipfs://",
+				`${env.GetAgorahIPFSDomain()}/`
+			);
 		} else if (metadata.image.includes("https://")) {
 			// For content stored somewhere other than IPFS.
 			// Only allow secure connections.

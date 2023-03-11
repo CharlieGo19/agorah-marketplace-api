@@ -7,6 +7,7 @@ export const PRISMA_DATABASE_CONNECTION_NOT_ESTABLISHED =
 export const PRISMA_BAD_PAYLOAD_PROVIDED_FOR_QUERY = "malformed payload provided for query";
 export const PRISMA_CREATE_FAILURE_TOKEN_EXISTS =
 	"prisma failed to insert data in to collections table, token already exists";
+export const PRISMA_FIND_FIRST_OR_THROW = "nft requested does not exist";
 
 // Prisma Error Codes
 export const PRISMA_ERROR_CODE_UNKNOWN = "P0000";

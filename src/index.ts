@@ -9,12 +9,14 @@ import rootRouter from "./routes/root";
 import collectionRouter from "./routes/collection";
 import { errorHandler, MirrorNodeError } from "./utils/error.handler";
 import nftsRouter from "./routes/nfts";
+import nftRouter from "./routes/nft";
 
 dotenv.config();
 // TODO: Setup TLS certs.
 // TODO: Secure sessions.
 // https://expressjs.com/en/advanced/best-practice-security.html
 
+const apiVersion = "/api/v0";
 export const env: Env = new Env();
 export const prisma: PrismaClient = new PrismaClient(); // TODO: Configure logging.
 
@@ -34,9 +36,10 @@ app.use(compression());
 app.disable("x-powered-by");
 
 app.use("/", rootRouter);
-app.use("/api/v0/", rootRouter);
-app.use("/api/v0/", collectionRouter);
-app.use("/api/v0/", nftsRouter);
+app.use(apiVersion, rootRouter);
+app.use(apiVersion, collectionRouter);
+app.use(apiVersion, nftsRouter);
+app.use(apiVersion, nftRouter);
 
 app.use((err: Error | MirrorNodeError, req: Request, res: Response, next: NextFunction) => {
 	errorHandler(err, req, res, next);

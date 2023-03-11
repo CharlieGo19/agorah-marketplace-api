@@ -33,6 +33,7 @@ import {
 	AXIOS_DEFAULT_IPFS_ERROR,
 	RESPONSE_IPFS_SERVICE_DOWN,
 	METADATA_NO_PARSABLE_IMAGE,
+	PRISMA_FIND_FIRST_OR_THROW,
 } from "./constants";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,12 +44,19 @@ export function errorHandler(
 	_next: NextFunction
 ) {
 	if (err instanceof PrismaError) {
+		console.log("Error recieved");
 		console.log("%s: PRISMA ERROR - %s, %s.", new Date().toUTCString(), err.code, err.message);
 		switch (err.code) {
 			case PRISMA_ERROR_CODE_P2033:
 				res.status(400).json({
 					status: 400,
 					error: RESPONSE_BAD_PARAM_REFUSED,
+				});
+				break;
+			case PRISMA_ERROR_CODE_P2025:
+				res.status(400).json({
+					status: 400,
+					error: RESPONSE_TOKEN_NOT_FOUND,
 				});
 				break;
 			// TODO: FINISH THESE.
@@ -160,9 +168,12 @@ export async function ResolvePrismaError(
 				}
 				break;
 			case PRISMA_ERROR_CODE_P2025: {
+				// TODO: Add collectionRequest type.
 				const collection: collections | undefined =
 					await GetCollectionInformationFromMirror(tokenId as bigint);
 				return collection as collections;
+
+				// TODO: Throw default.
 			}
 			case PRISMA_ERROR_CODE_P2033:
 				throw new PrismaError(err.code, PRISMA_BAD_PAYLOAD_PROVIDED_FOR_QUERY, err.stack);

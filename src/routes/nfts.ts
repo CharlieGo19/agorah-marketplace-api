@@ -1,7 +1,6 @@
 import { nft } from "@prisma/client";
 import { Router, Request, Response, NextFunction } from "express";
 import { GetNftPreviewsRange } from "../controllers/nfts.controller";
-import { PrismaToJSON } from "../utils/helper.functions";
 
 const nftsRouter: Router = Router();
 

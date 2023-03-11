@@ -69,6 +69,7 @@ export async function GetCollectionInformationFromMirror(
 			}
 		}
 	}
+
 	const nftCollection: collections = {
 		token_id: BigInt(nftReturnData.token_id.split(".")[2]),
 		token_name: nftReturnData.name,

@@ -2,6 +2,7 @@ export class Env {
 	#expressApiPort: string;
 	#mirrorProviderApiKeyI: string;
 	#mirrorProviderRestApiI: string;
+	#agorahIpfsDomain: string;
 	#nftRequestRangeLimit: number;
 	#enableStackTrace: boolean;
 	#enableUserInputErrorTrace: boolean;
@@ -34,6 +35,15 @@ export class Env {
 			process.exit();
 		} else {
 			this.#mirrorProviderRestApiI = process.env.MIRROR_NODE_PROVIDER_REST_API_I;
+		}
+
+		if (!process.env.AGORAH_IPFS_CDN) {
+			console.log(
+				`${dateTime} AGORAH_IPFS_CDN UNDEFINED: Can not set sensible default, exiting...`
+			);
+			process.exit();
+		} else {
+			this.#agorahIpfsDomain = process.env.AGORAH_IPFS_CDN;
 		}
 
 		if (!process.env.NFT_REQUEST_RANGE_LIMIT) {
@@ -94,6 +104,10 @@ export class Env {
 
 	GetMirrorBaseUrlI(): string {
 		return this.#mirrorProviderRestApiI;
+	}
+
+	GetAgorahIPFSDomain(): string {
+		return this.#agorahIpfsDomain;
 	}
 
 	GetNftRequestRangeLimit(): number {
