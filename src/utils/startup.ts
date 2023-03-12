@@ -10,13 +10,11 @@ export class Env {
 
 	constructor() {
 		const dateTime: string = new Date().toUTCString();
-		if (!process.env.EXPRESS_API_PORT) {
-			console.log(
-				`${dateTime} EXPRESS_API_PORT UNDEFINED: Setting sensible default of 4200.`
-			);
+		if (!process.env.PORT) {
+			console.log(`${dateTime} PORT UNDEFINED: Setting sensible default of 4200.`);
 			this.#expressApiPort = "4200";
 		} else {
-			this.#expressApiPort = process.env.EXPRESS_API_PORT;
+			this.#expressApiPort = process.env.PORT;
 		}
 
 		if (!process.env.MIRROR_NODE_PROVIDER_API_KEY_I) {
