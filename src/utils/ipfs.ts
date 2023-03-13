@@ -16,7 +16,8 @@ export async function GetMetaData(cid: string): Promise<FuzzyToken | undefined> 
 	const ipfsMetaData = await axios.get(
 		`/${Buffer.from(cid, "base64").toLocaleString().replace("ipfs://", "")}`,
 		axiosConfig
-	); //axios.get(CloudFlareConfig(cid));
+	);
+
 	return ipfsMetaData.data;
 }
 

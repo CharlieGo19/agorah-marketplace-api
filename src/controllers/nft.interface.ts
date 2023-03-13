@@ -35,7 +35,8 @@ export type FuzzyToken = {
 	creator: string;
 	creatorDID?: string;
 	description?: string;
-	image: string;
+	image?: string;
+	CID?: string; // HASHAXIS token support
 	checksum?: string;
 	typemime: string;
 	files?: HIP412Files[];

@@ -43,8 +43,22 @@ export function FuzzyTokenParser(
 			// TODO: Should have own error class TBH.
 			throw new IpfsError(0, METADATA_NO_PARSABLE_IMAGE, undefined);
 		}
+	} else if (metadata.CID !== undefined) {
+		if (metadata.CID.includes("ipfs://")) {
+			nftTableMetadata.nft_file = metadata.CID.replace(
+				"ipfs://",
+				`${env.GetAgorahIPFSDomain()}/`
+			);
+		} else if (metadata.CID.includes("https://")) {
+			// For content stored somewhere other than IPFS.
+			// Only allow secure connections.
+			nftTableMetadata.nft_file = metadata.CID;
+		} else {
+			// TODO: Should have own error class TBH.
+			throw new IpfsError(0, METADATA_NO_PARSABLE_IMAGE, undefined);
+		}
 	} else {
-		throw new IpfsError(0, METADATA_NO_PARSABLE_IMAGE, undefined);
+		throw new IpfsError(0, METADATA_NO_PARSABLE_IMAGE, undefined); // TODO: Spacebar should trigger this error...
 	}
 
 	// TODO: Clipping, if exceeds the 1MB limit, cut it.

@@ -70,7 +70,7 @@ export async function GetNft(
 			}
 			return result as nft;
 		} catch (err: unknown) {
-			if (err instanceof PrismaError) {
+			if (err instanceof PrismaError || IpfsError) {
 				throw err;
 			} else {
 				await ResolvePrismaError(err, collectionId);
@@ -83,7 +83,6 @@ export async function GetNft(
 			err instanceof IpfsError
 		) {
 			// Throw the err, as it's already been resolved.
-			console.log();
 			throw err;
 		} else if (err instanceof Error) {
 			ResolveAgorahError(err);

@@ -33,8 +33,8 @@ import {
 	AXIOS_DEFAULT_IPFS_ERROR,
 	RESPONSE_IPFS_SERVICE_DOWN,
 	METADATA_NO_PARSABLE_IMAGE,
-	RESPONSE_MESSY_METADATA,
 	PRISMA_UNOFFICIAL_ERROR_CODE_VALIDATION_ERROR,
+	RESPONSE_MESSY_METADATA,
 } from "./constants";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -266,6 +266,11 @@ export function ResolveIpfsError(err: unknown) {
 			default:
 				throw new IpfsError(0, AXIOS_DEFAULT_IPFS_ERROR, err.stack);
 		}
+	} else {
+		// For non-axios related errors that are loosely coupled with the IPFS Data.
+		// TODO: Extract this out into its own error class.
+		const error: IpfsError = err as IpfsError;
+		throw new IpfsError(error.code, error.message, error.stack);
 	}
 }
 
@@ -328,7 +333,10 @@ function WriteUserInputTrace(type: string, err: AgorahError | PrismaError | Mirr
 	}
 }
 
-function WriteIpfsTrace(type: string, err: AgorahError | PrismaError | MirrorNodeError) {
+function WriteIpfsTrace(
+	type: string,
+	err: AgorahError | PrismaError | MirrorNodeError | IpfsError
+) {
 	if (env.GetEnableIpfsErrorInputTrace()) {
 		console.log("%s: %s - %s, %s.", new Date().toUTCString(), type, err.code, err.message);
 	}
