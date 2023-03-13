@@ -16,7 +16,7 @@ dotenv.config();
 // TODO: Secure sessions.
 // https://expressjs.com/en/advanced/best-practice-security.html
 
-const apiVersion = "/api/v0";
+const apiVersion = "/v0";
 export const env: Env = new Env();
 export const prisma: PrismaClient = new PrismaClient(); // TODO: Configure logging.
 
