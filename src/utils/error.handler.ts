@@ -62,7 +62,7 @@ export function errorHandler(
 			case PRISMA_UNOFFICIAL_ERROR_CODE_VALIDATION_ERROR:
 				res.status(400).json({
 					status: 400,
-					RESPONSE_MESSY_METADATA,
+					error: RESPONSE_MESSY_METADATA,
 				});
 				break;
 			case PRISMA_UNOFFICIAL_ERROR_CODE_UNKNOWN:
