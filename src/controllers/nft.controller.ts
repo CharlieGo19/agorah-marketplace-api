@@ -1,5 +1,5 @@
 import { collections, nft } from "@prisma/client";
-import { env, prisma } from "..";
+import { prisma } from "..";
 import { AGORAH_ERROR_MESSAGE_A1003 } from "../utils/constants";
 import {
 	IpfsError,
@@ -65,12 +65,16 @@ export async function GetNft(
 						data: result as nft,
 					});
 				} catch (err: unknown) {
-					ResolvePrismaError(err, null);
+					await ResolvePrismaError(err, null);
 				}
 			}
 			return result as nft;
 		} catch (err: unknown) {
-			await ResolvePrismaError(err, collectionId);
+			if (err instanceof PrismaError) {
+				throw err;
+			} else {
+				await ResolvePrismaError(err, collectionId);
+			}
 		}
 	} catch (err: unknown) {
 		if (
@@ -79,6 +83,7 @@ export async function GetNft(
 			err instanceof IpfsError
 		) {
 			// Throw the err, as it's already been resolved.
+			console.log();
 			throw err;
 		} else if (err instanceof Error) {
 			ResolveAgorahError(err);

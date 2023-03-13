@@ -16,7 +16,7 @@ import {
 	PRISMA_ERROR_CODE_P2002,
 	PRISMA_ERROR_CODE_P2025,
 	PRISMA_ERROR_CODE_P2033,
-	PRISMA_ERROR_CODE_UNKNOWN,
+	PRISMA_UNOFFICIAL_ERROR_CODE_UNKNOWN,
 	RESPONSE_TOKEN_NOT_FOUND,
 	RESPONSE_BAD_PARAM_REFUSED,
 	RESPONSE_UNEXPECTED_ERROR,
@@ -33,7 +33,8 @@ import {
 	AXIOS_DEFAULT_IPFS_ERROR,
 	RESPONSE_IPFS_SERVICE_DOWN,
 	METADATA_NO_PARSABLE_IMAGE,
-	PRISMA_FIND_FIRST_OR_THROW,
+	RESPONSE_MESSY_METADATA,
+	PRISMA_UNOFFICIAL_ERROR_CODE_VALIDATION_ERROR,
 } from "./constants";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,7 +45,6 @@ export function errorHandler(
 	_next: NextFunction
 ) {
 	if (err instanceof PrismaError) {
-		console.log("Error recieved");
 		console.log("%s: PRISMA ERROR - %s, %s.", new Date().toUTCString(), err.code, err.message);
 		switch (err.code) {
 			case PRISMA_ERROR_CODE_P2033:
@@ -59,7 +59,20 @@ export function errorHandler(
 					error: RESPONSE_TOKEN_NOT_FOUND,
 				});
 				break;
-			// TODO: FINISH THESE.
+			case PRISMA_UNOFFICIAL_ERROR_CODE_VALIDATION_ERROR:
+				res.status(400).json({
+					status: 400,
+					RESPONSE_MESSY_METADATA,
+				});
+				break;
+			case PRISMA_UNOFFICIAL_ERROR_CODE_UNKNOWN:
+			default:
+				res.status(400).json({
+					status: 400,
+					RESPONSE_UNEXPECTED_ERROR,
+				});
+				break;
+			// TODO: FINISH THESE. DO UNOFFICIAL_ERROR UKNOWN
 		}
 	} else if (err instanceof MirrorNodeError) {
 		switch (err.code) {
@@ -181,7 +194,7 @@ export async function ResolvePrismaError(
 				throw new PrismaError(err.code, PRIMSA_UNACCOUNTED_FOR_ERROR, err.stack);
 		}
 	} else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
-		throw new PrismaError(PRISMA_ERROR_CODE_UNKNOWN, err.message, err.stack);
+		throw new PrismaError(PRISMA_UNOFFICIAL_ERROR_CODE_UNKNOWN, err.message, err.stack);
 	} else if (err instanceof Prisma.PrismaClientInitializationError) {
 		throw new PrismaError(
 			err.errorCode as string,
@@ -189,16 +202,17 @@ export async function ResolvePrismaError(
 			err.stack
 		);
 	} else if (err instanceof Prisma.PrismaClientValidationError) {
+		console.log("Valudation Error");
 		throw new PrismaError(
-			PRISMA_ERROR_CODE_UNKNOWN,
+			PRISMA_UNOFFICIAL_ERROR_CODE_VALIDATION_ERROR,
 			PRISMA_BAD_PAYLOAD_PROVIDED_FOR_QUERY,
 			err.stack
 		);
 	} else if (err instanceof Prisma.PrismaClientRustPanicError) {
-		throw new PrismaError(PRISMA_ERROR_CODE_UNKNOWN, PRISMA_CLIENT_CRASH, err.stack);
+		throw new PrismaError(PRISMA_UNOFFICIAL_ERROR_CODE_UNKNOWN, PRISMA_CLIENT_CRASH, err.stack);
 	} else {
 		throw new PrismaError(
-			PRISMA_ERROR_CODE_UNKNOWN,
+			PRISMA_UNOFFICIAL_ERROR_CODE_UNKNOWN,
 			PRIMSA_UNACCOUNTED_FOR_ERROR,
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(err as any).stack
