@@ -69,13 +69,12 @@ export async function GetCollectionInformationFromMirror(
 			}
 		}
 	}
-
 	const nftCollection: collections = {
 		token_id: BigInt(nftReturnData.token_id.split(".")[2]),
 		token_name: nftReturnData.name,
 		token_symbol: nftReturnData.symbol,
-		current_supply: Number(nftReturnData.total_supply),
-		max_supply: Number(nftReturnData.max_supply),
+		current_supply: BigInt(nftReturnData.total_supply),
+		max_supply: BigInt(nftReturnData.max_supply),
 		royalty_fee: royalty_fees,
 		royalty_collector: royalty_collectors,
 		royalty_fallback_fee_amount: royalty_fallback_fee_amounts,

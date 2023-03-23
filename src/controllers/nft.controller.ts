@@ -27,14 +27,10 @@ export async function GetNft(
 ): Promise<nft | undefined> {
 	try {
 		const collectionId = BigInt(collectionIdInput.split(".")[2]);
-		const nftSerial = Number(nftSerialInput);
-
-		if (isNaN(nftSerial)) {
-			throw new SyntaxError("NaN found when converting string to number");
-		}
+		const nftSerial = BigInt(nftSerialInput);
+		// TODO: bigInt PARSE Error.
 
 		const collection: collections = (await GetCollection(collectionId)) as collections;
-
 		// TODO: Add same last_synced check here (as nfts.controller.ts)
 		if (nftSerial > collection.current_supply) {
 			throw Error(AGORAH_ERROR_MESSAGE_A1003);
@@ -46,14 +42,12 @@ export async function GetNft(
 					serial_id: nftSerial,
 				},
 			});
-
 			if (result === null) {
 				const nftMirrorRecord: AxiosResponseNftSerials =
 					await new MirrorNode().MirrorRequestNfts(collectionId, nftSerial, nftSerial);
 				const metaData: FuzzyToken | undefined = await GetMetaData(
 					nftMirrorRecord.nfts[0].metadata
 				);
-
 				try {
 					result = FuzzyTokenParser(metaData as FuzzyToken, collectionId, nftSerial);
 				} catch (err: unknown) {
@@ -83,6 +77,7 @@ export async function GetNft(
 			err instanceof IpfsError
 		) {
 			// Throw the err, as it's already been resolved.
+			console.log("Why haven't I hit this?");
 			throw err;
 		} else if (err instanceof Error) {
 			ResolveAgorahError(err);

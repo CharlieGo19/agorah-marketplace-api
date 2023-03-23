@@ -10,6 +10,8 @@ import collectionRouter from "./routes/collection";
 import { errorHandler, MirrorNodeError } from "./utils/error.handler";
 import nftsRouter from "./routes/nfts";
 import nftRouter from "./routes/nft";
+import searchRouter from "./routes/search";
+import userCurationRouter from "./routes/curation";
 
 dotenv.config();
 // TODO: Setup TLS certs.
@@ -40,6 +42,8 @@ app.use(apiVersion, rootRouter);
 app.use(apiVersion, collectionRouter);
 app.use(apiVersion, nftsRouter);
 app.use(apiVersion, nftRouter);
+app.use(apiVersion, searchRouter);
+app.use(apiVersion, userCurationRouter);
 
 app.use((err: Error | MirrorNodeError, req: Request, res: Response, next: NextFunction) => {
 	errorHandler(err, req, res, next);

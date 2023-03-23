@@ -11,8 +11,8 @@ model collections {
   token_id                    BigInt    @id
   token_name                  String    @db.VarChar(100)
   token_symbol                String    @db.VarChar(100)
-  current_supply              Int
-  max_supply                  Int
+  current_supply              BigInt
+  max_supply                  BigInt
   royalty_fee                 Decimal[] @default([]) @db.Decimal
   royalty_collector           BigInt[]  @default([])
   royalty_fallback_fee_amount BigInt[]  @default([])
@@ -26,7 +26,7 @@ model collections {
 
 model nft {
   token_id             BigInt
-  serial_id            Int
+  serial_id            BigInt
   nft_name             String?     @db.VarChar(512)
   nft_creator          String?     @db.VarChar(128)
   nft_description      String?
@@ -42,7 +42,7 @@ model nft {
 
 model nft_additional_files {
   token_id                         BigInt
-  serial_id                        Int
+  serial_id                        BigInt
   file_index                       Int
   additional_nft_file              String  @db.VarChar(1024)
   additional_nft_file_checkshum    String? @db.VarChar(64)

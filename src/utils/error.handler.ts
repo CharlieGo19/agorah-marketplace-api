@@ -35,6 +35,8 @@ import {
 	METADATA_NO_PARSABLE_IMAGE,
 	PRISMA_UNOFFICIAL_ERROR_CODE_VALIDATION_ERROR,
 	RESPONSE_MESSY_METADATA,
+	AGORAH_ERROR_CODE_A1004,
+	AGORAH_ERROR_MESSAGE_A1004,
 } from "./constants";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,6 +46,7 @@ export function errorHandler(
 	res: Response,
 	_next: NextFunction
 ) {
+	console.log("Made it to the Err Handler.");
 	if (err instanceof PrismaError) {
 		console.log("%s: PRISMA ERROR - %s, %s.", new Date().toUTCString(), err.code, err.message);
 		switch (err.code) {
@@ -120,6 +123,7 @@ export function errorHandler(
 			case AGORAH_ERROR_CODE_A1001:
 			case AGORAH_ERROR_CODE_A1002:
 			case AGORAH_ERROR_CODE_A1003:
+			case AGORAH_ERROR_CODE_A1004:
 				WriteUserInputTrace("AGORAH ERROR", err);
 				res.status(418).json({
 					status: 418,
@@ -293,7 +297,8 @@ export class AgorahError extends Error {
 export function ResolveAgorahError(err: Error) {
 	switch (err.name) {
 		case "SyntaxError": {
-			if (err.message.includes("NaN")) {
+			// TODO: Fix this -- this may be triggered by curation.
+			if (err.message.includes("BigInt")) {
 				throw new AgorahError(
 					AGORAH_ERROR_CODE_A1002,
 					AGORAH_ERROR_MESSAGE_A1002,
@@ -314,6 +319,12 @@ export function ResolveAgorahError(err: Error) {
 				throw new AgorahError(
 					AGORAH_ERROR_CODE_A1003,
 					AGORAH_ERROR_MESSAGE_A1003,
+					err.stack
+				);
+			} else if (err.message === AGORAH_ERROR_MESSAGE_A1004) {
+				throw new AgorahError(
+					AGORAH_ERROR_CODE_A1004,
+					AGORAH_ERROR_MESSAGE_A1004,
 					err.stack
 				);
 			}

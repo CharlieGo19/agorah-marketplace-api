@@ -15,3 +15,9 @@ When first pulling this repo:
 What happens when token is infinate? Set hard limit to what we will store.
 
 # TODO
+
+1. Mon, 20 Mar 2023 09:30:37 GMT: PRISMA ERROR - P2002, possible cause: filling in incomplete data.
+   Error may be getting triggered when data is out of range of NFT serials, put check in to ignore.
+2. CloudFlare - check connections secure https://ipfs.agorah.io/QmRgphY9jM4Co4Z6vRLadsg2cyukn95gBEFF1afuELw1qp, need to do
+   Additional Checks on headers coming back, then possibly trying Pinata?!
+3. Move IPFS provider to env, with a backup.

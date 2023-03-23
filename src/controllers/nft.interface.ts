@@ -5,7 +5,7 @@ export interface MirrorNodeNftSerial {
 	deleted: boolean;
 	metadata: string;
 	modified_timestamp: string;
-	serial_number: number;
+	serial_number: bigint;
 	spender: null | unknown; // TODO: Find structure for this, most likely arr of accounts & ammounts
 	token_id: string;
 }

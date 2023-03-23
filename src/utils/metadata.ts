@@ -14,7 +14,7 @@ import { IpfsError } from "./error.handler";
 export function FuzzyTokenParser(
 	metadata: FuzzyToken,
 	collectionId: bigint,
-	serialId: number
+	serialId: bigint
 ): nft {
 	const nftTableMetadata: nft = {
 		token_id: collectionId,

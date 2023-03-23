@@ -39,12 +39,14 @@ export const AGORAH_ERROR_CODE_A0000 = "A0000";
 export const AGORAH_ERROR_CODE_A1001 = "A1001";
 export const AGORAH_ERROR_CODE_A1002 = "A1002";
 export const AGORAH_ERROR_CODE_A1003 = "A1003";
+export const AGORAH_ERROR_CODE_A1004 = "A1004";
 
 // Agorah Error Messages
 export const AGORAH_ERROR_MESSAGE_A0000 = "unexpected error, please contact @AGORAH";
 export const AGORAH_ERROR_MESSAGE_A1001 = "invalid token id provided";
 export const AGORAH_ERROR_MESSAGE_A1002 = "range either too big or exceeds series";
-export const AGORAH_ERROR_MESSAGE_A1003 = "invalied series range";
+export const AGORAH_ERROR_MESSAGE_A1003 = "invalid series range";
+export const AGORAH_ERROR_MESSAGE_A1004 = "invalid account id provided";
 
 // API Response Messages
 export const RESPONSE_BAD_PARAM_REFUSED = "BAD INPUT, SERVER REFUSED TO PROCESS";

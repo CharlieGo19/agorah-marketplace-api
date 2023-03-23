@@ -25,14 +25,10 @@ export async function GetNftPreviewsRange(
 ): Promise<nft[] | undefined> {
 	try {
 		const collectionId = BigInt(collectionIdInput.split(".")[2]);
-		const nftSerialRangeFrom = Number(nftSerialRangeFromInput);
-		const nftSerialRangeTo = Number(nftSerialRangeToInput);
-		const numberOfNftsRequested = nftSerialRangeTo - nftSerialRangeFrom + 1; // Because serials start at 1.
+		const nftSerialRangeFrom = BigInt(nftSerialRangeFromInput);
+		const nftSerialRangeTo = BigInt(nftSerialRangeToInput);
+		const numberOfNftsRequested = Number(nftSerialRangeTo - nftSerialRangeFrom + 1n); // Because serials start at 1.
 		let isNftDataComplete = false;
-
-		if (isNaN(nftSerialRangeFrom) || isNaN(nftSerialRangeTo)) {
-			throw new SyntaxError("NaN found when converting string to number");
-		}
 
 		if (nftSerialRangeTo < nftSerialRangeFrom || nftSerialRangeFrom <= 0) {
 			throw Error(AGORAH_ERROR_MESSAGE_A1003);
@@ -48,7 +44,7 @@ export async function GetNftPreviewsRange(
 			throw Error(AGORAH_ERROR_MESSAGE_A1003);
 		}
 
-		if (collection.current_supply == collection.max_supply) {
+		if (collection.current_supply === collection.max_supply) {
 			isNftDataComplete = true;
 		}
 
