@@ -10,6 +10,14 @@ export interface MirrorNodeNfts {
 	token_id: string;
 }
 
+export interface CuratedNft {
+	name: string;
+	src: string;
+	collection: string;
+	serial: string;
+	forSale: boolean;
+}
+
 export interface MirrorNodeAccountNfts {
 	nfts: MirrorNodeNfts[];
 	links: {

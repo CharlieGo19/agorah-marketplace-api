@@ -45,6 +45,7 @@ export async function GetNft(
 			if (result === null) {
 				const nftMirrorRecord: AxiosResponseNftSerials =
 					await new MirrorNode().MirrorRequestNfts(collectionId, nftSerial, nftSerial);
+
 				const metaData: FuzzyToken | undefined = await GetMetaData(
 					nftMirrorRecord.nfts[0].metadata
 				);
@@ -77,7 +78,6 @@ export async function GetNft(
 			err instanceof IpfsError
 		) {
 			// Throw the err, as it's already been resolved.
-			console.log("Why haven't I hit this?");
 			throw err;
 		} else if (err instanceof Error) {
 			ResolveAgorahError(err);

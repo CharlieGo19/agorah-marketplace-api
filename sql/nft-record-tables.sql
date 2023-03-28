@@ -52,3 +52,6 @@ CREATE TABLE IF NOT EXISTS nft_additional_files (
 CREATE TABLE IF NOT EXISTS platform_metrics(
     mirror_node_api_request BIGINT NOT NULL DEFAULT 0
 );
+
+-- Optimisations:
+CREATE INDEX nft_token_id_idx ON nft (token_id);

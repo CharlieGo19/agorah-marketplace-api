@@ -46,7 +46,6 @@ export function errorHandler(
 	res: Response,
 	_next: NextFunction
 ) {
-	console.log("Made it to the Err Handler.");
 	if (err instanceof PrismaError) {
 		console.log("%s: PRISMA ERROR - %s, %s.", new Date().toUTCString(), err.code, err.message);
 		switch (err.code) {
@@ -206,7 +205,6 @@ export async function ResolvePrismaError(
 			err.stack
 		);
 	} else if (err instanceof Prisma.PrismaClientValidationError) {
-		console.log("Valudation Error");
 		throw new PrismaError(
 			PRISMA_UNOFFICIAL_ERROR_CODE_VALIDATION_ERROR,
 			PRISMA_BAD_PAYLOAD_PROVIDED_FOR_QUERY,

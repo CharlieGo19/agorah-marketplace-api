@@ -21,3 +21,5 @@ What happens when token is infinate? Set hard limit to what we will store.
 2. CloudFlare - check connections secure https://ipfs.agorah.io/QmRgphY9jM4Co4Z6vRLadsg2cyukn95gBEFF1afuELw1qp, need to do
    Additional Checks on headers coming back, then possibly trying Pinata?!
 3. Move IPFS provider to env, with a backup.
+4. Chnge how error handling works, if token in a list, i.e. curation, just remove the NFT thats problematic or add fields
+   and add special additional property with err message, with a support link & we can implement.
