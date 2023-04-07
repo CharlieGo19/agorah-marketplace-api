@@ -25,6 +25,7 @@ export class MirrorNode {
 			);
 			return getData.data;
 		} catch (err) {
+			console.log("Error TokenInfo:Mirror", err);
 			ResolveMirrorError(err);
 		}
 	}
@@ -39,6 +40,7 @@ export class MirrorNode {
 			);
 			return getData.data;
 		} catch (err) {
+			console.log("Error RequestNFTs:Mirror", err);
 			ResolveMirrorError(err);
 		}
 	}
@@ -54,6 +56,7 @@ export class MirrorNode {
 			);
 			return getData.data;
 		} catch (err) {
+			console.log("Error Curation:Mirror", err);
 			ResolveMirrorError(err);
 		}
 	}
@@ -65,6 +68,7 @@ export class MirrorNode {
 			const getData = await axios.get(nextUrl, this.#axiosConfig);
 			return getData.data;
 		} catch (err) {
+			console.log("Error CurationFollowUp:Mirror", err);
 			ResolveMirrorError(err);
 		}
 	}
