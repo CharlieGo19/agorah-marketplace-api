@@ -5,6 +5,8 @@ import { ResolveMirrorError } from "./error.handler";
 import { MirrorNodeAccountNfts } from "../controllers/curation.interface";
 
 export class MirrorNode {
+	ArkhiaApiVersion = "/api/v1"; // this is not part of the env. var because of how Arkhia give the next link.
+
 	#axiosConfig = {
 		headers: {
 			"x-api-key": env.GetMirrorApiKeyI(),
@@ -18,7 +20,7 @@ export class MirrorNode {
 		try {
 			const collectionIdFull = `0.0.${collectionId}`;
 			const getData = await axios.get<AxiosResponseNftCollection>(
-				`/tokens/${collectionIdFull}/`,
+				`${this.ArkhiaApiVersion}/tokens/${collectionIdFull}/`,
 				this.#axiosConfig
 			);
 			return getData.data;
@@ -32,7 +34,7 @@ export class MirrorNode {
 		try {
 			const collectionIdFull = `0.0.${collectionId}`;
 			const getData = await axios.get(
-				`/tokens/${collectionIdFull}/nfts?limit=${limit}&order=asc&serialnumber=gte%3A${from}`,
+				`${this.ArkhiaApiVersion}/tokens/${collectionIdFull}/nfts?limit=${limit}&order=asc&serialnumber=gte%3A${from}`,
 				this.#axiosConfig
 			);
 			return getData.data;
@@ -47,7 +49,7 @@ export class MirrorNode {
 	): Promise<MirrorNodeAccountNfts | undefined> {
 		try {
 			const getData = await axios.get(
-				`/accounts/${accountId}/nfts?order=asc`,
+				`${this.ArkhiaApiVersion}/accounts/${accountId}/nfts?order=asc`,
 				this.#axiosConfig
 			);
 			return getData.data;
@@ -60,8 +62,7 @@ export class MirrorNode {
 		nextUrl: string
 	): Promise<MirrorNodeAccountNfts | undefined> {
 		try {
-			this.#axiosConfig.baseURL = nextUrl;
-			const getData = await axios.get("", this.#axiosConfig);
+			const getData = await axios.get(nextUrl, this.#axiosConfig);
 			return getData.data;
 		} catch (err) {
 			ResolveMirrorError(err);

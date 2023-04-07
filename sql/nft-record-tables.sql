@@ -47,6 +47,12 @@ CREATE TABLE IF NOT EXISTS nft_additional_files (
     PRIMARY KEY (token_id, serial_id, file_index)
 );
 
+CREATE TABLE IF NOT EXISTS unsupported_nfts (
+    token_id BIGINT NOT NULL UNIQUE,
+    requested INT NOT NULL DEFAULT 1,
+    PRIMARY KEY (token_id)
+);
+
 -- TODO: reference nft table, or set a contraint that token_id and serial_id must exist for an entry into nft_additional_files.
 
 CREATE TABLE IF NOT EXISTS platform_metrics(

@@ -7,7 +7,15 @@ const IPFS_PROVIDER_CLOUDFLARE = "https://cloudflare-ipfs.com/ipfs";
 const axiosConfig: AxiosRequestConfig = {
 	baseURL: IPFS_PROVIDER_CLOUDFLARE,
 };
+
+/**
+ *
+ * @param cid {string} CIDv1 | v0
+ * @returns raw metadata from mirror IPFS, unless it's a name service, where it is amended to conform to HIP412.
+ */
 export async function GetMetaData(cid: string): Promise<FuzzyToken | undefined> {
+	const cidregex =
+		/Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,}/;
 	try {
 		const metaDataAddress = Buffer.from(cid, "base64").toLocaleString();
 		if (metaDataAddress.includes("kns:")) {
@@ -18,11 +26,19 @@ export async function GetMetaData(cid: string): Promise<FuzzyToken | undefined> 
 				typemime: "image/gif",
 			};
 			return KabutoNameServiceToken;
-		} else {
+		} else if (metaDataAddress.includes("ipfs://")) {
 			const ipfsMetaData = await axios.get(
-				`/${Buffer.from(cid, "base64").toLocaleString().replace("ipfs://", "")}`,
+				`/${metaDataAddress.replace("ipfs://", "")}`,
 				axiosConfig
 			);
+			return ipfsMetaData.data;
+		} else if (cidregex.test(metaDataAddress)) {
+			const ipfsMetaData = await axios.get(metaDataAddress, axiosConfig);
+			return ipfsMetaData.data;
+		} else if (metaDataAddress.includes("https://")) {
+			// For weird edge cases where they host their own stuff.
+			axiosConfig.baseURL = metaDataAddress;
+			const ipfsMetaData = await axios.get("", axiosConfig);
 			return ipfsMetaData.data;
 		}
 	} catch (err) {

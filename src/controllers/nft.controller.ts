@@ -31,10 +31,11 @@ export async function GetNft(
 		// TODO: bigInt PARSE Error.
 
 		const collection: collections = (await GetCollection(collectionId)) as collections;
+
 		// TODO: Add same last_synced check here (as nfts.controller.ts)
-		if (nftSerial > collection.current_supply) {
-			throw Error(AGORAH_ERROR_MESSAGE_A1003);
-		}
+		// if (nftSerial > collection.current_supply) {
+		// 	throw Error(AGORAH_ERROR_MESSAGE_A1003); // TODO: This has been disabled for now - https://mainnet-public.mirrornode.hedera.com/api/v1/tokens/0.0.588870/ total supply is 0 but tokens exist
+		// } // We could do a search, maybe a divide and conquer approach - take halfway point, and then update our records when we know how many tokens exist.
 		try {
 			let result: nft | null = await prisma.nft.findFirst({
 				where: {
@@ -45,10 +46,10 @@ export async function GetNft(
 			if (result === null) {
 				const nftMirrorRecord: AxiosResponseNftSerials =
 					await new MirrorNode().MirrorRequestNfts(collectionId, nftSerial, nftSerial);
-
 				const metaData: FuzzyToken | undefined = await GetMetaData(
 					nftMirrorRecord.nfts[0].metadata
 				);
+
 				try {
 					result = FuzzyTokenParser(metaData as FuzzyToken, collectionId, nftSerial);
 				} catch (err: unknown) {

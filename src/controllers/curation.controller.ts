@@ -10,6 +10,17 @@ import { MirrorNode } from "../utils/mnode";
 import { CuratedNft, MirrorNodeAccountNfts, MirrorNodeNfts } from "./curation.interface";
 import { GetNft } from "./nft.controller";
 
+/**
+ * @async
+ * @function GetCuration
+ * @summary Gets the curation of a given account.
+ * @param {string} accountId - The Hedera Account ID of the user to get the curation of.
+ * @returns {Promise<CuratedNft[] | undefined>} - Returns an array of curated NFTs.
+ * @throws {MirrorNodeError} - If the MirrorNode returns an error.
+ * @throws {IpfsError} - If the IPFS node returns an error.
+ * @throws {PrismaError} - If the Prisma client returns an error.
+ * @throws {Error} - If the input is invalid.
+ */
 export async function GetCuration(accountId: string): Promise<CuratedNft[] | undefined> {
 	const splitAccountId: string[] = accountId.split(".");
 
@@ -25,7 +36,7 @@ export async function GetCuration(accountId: string): Promise<CuratedNft[] | und
 		) {
 			throw new Error(AGORAH_ERROR_MESSAGE_A1004);
 		} else {
-			const userCuration: MirrorNodeNfts[] = []; // TODO: Test -- unsure if this is in scope of anonfunc below.
+			const userCuration: MirrorNodeNfts[] = [];
 
 			const GetSubseuqentNfts = async function (nextUrl: string | null) {
 				if (nextUrl === null) {
