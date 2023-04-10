@@ -25,7 +25,6 @@ export class MirrorNode {
 			);
 			return getData.data;
 		} catch (err) {
-			console.log("Error TokenInfo:Mirror", err);
 			ResolveMirrorError(err);
 		}
 	}
@@ -40,7 +39,6 @@ export class MirrorNode {
 			);
 			return getData.data;
 		} catch (err) {
-			console.log("Error RequestNFTs:Mirror", err);
 			ResolveMirrorError(err);
 		}
 	}
@@ -50,13 +48,17 @@ export class MirrorNode {
 		accountId: string
 	): Promise<MirrorNodeAccountNfts | undefined> {
 		try {
+			if (env.GetEnableErrorStackTrace()) {
+				console.log(
+					`[DEBUG] Getting Account Token info from https://mainnet-public.mirrornode.hedera.com/api/v1/accounts/${accountId}/nfts?limit=100&order=asc`
+				);
+			}
 			const getData = await axios.get(
-				`${this.ArkhiaApiVersion}/accounts/${accountId}/nfts?order=asc`,
+				`${this.ArkhiaApiVersion}/accounts/${accountId}/nfts?limit=100&order=asc`,
 				this.#axiosConfig
 			);
 			return getData.data;
 		} catch (err) {
-			console.log("Error Curation:Mirror", err);
 			ResolveMirrorError(err);
 		}
 	}
@@ -65,10 +67,14 @@ export class MirrorNode {
 		nextUrl: string
 	): Promise<MirrorNodeAccountNfts | undefined> {
 		try {
+			if (env.GetEnableErrorStackTrace()) {
+				console.log(
+					`[DEBUG] Next URL being called https://mainnet-public.mirrornode.hedera.com${nextUrl}`
+				);
+			}
 			const getData = await axios.get(nextUrl, this.#axiosConfig);
 			return getData.data;
 		} catch (err) {
-			console.log("Error CurationFollowUp:Mirror", err);
 			ResolveMirrorError(err);
 		}
 	}

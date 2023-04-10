@@ -9,6 +9,7 @@ import {
 import { MirrorNode } from "../utils/mnode";
 import { CuratedNft, MirrorNodeAccountNfts, MirrorNodeNfts } from "./curation.interface";
 import { GetNft } from "./nft.controller";
+import { env } from "..";
 
 /**
  * @async
@@ -76,6 +77,10 @@ export async function GetCuration(accountId: string): Promise<CuratedNft[] | und
 				dataToReturn.push(valueToReturn);
 			}
 			// once we figure out whats causing this, figure lut with PrismaError has not been resoved.
+
+			if (env.GetEnableErrorStackTrace()) {
+				console.log(`[DEBUG] GetCuration Returned Set Size: ${dataToReturn.length}`);
+			}
 			return dataToReturn;
 		}
 		//

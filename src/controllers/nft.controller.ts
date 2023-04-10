@@ -1,5 +1,5 @@
 import { collections, nft } from "@prisma/client";
-import { prisma } from "..";
+import { env, prisma } from "..";
 import { AGORAH_ERROR_MESSAGE_A1003 } from "../utils/constants";
 import {
 	IpfsError,
@@ -32,6 +32,10 @@ export async function GetNft(
 
 		const collection: collections = (await GetCollection(collectionId)) as collections;
 
+		if (env.GetEnableErrorStackTrace()) {
+			console.log(`[DEBUG] CollectionID: 0.0.${collectionId} Serial: ${nftSerial}`);
+		}
+
 		// TODO: Add same last_synced check here (as nfts.controller.ts)
 		// if (nftSerial > collection.current_supply) {
 		// 	throw Error(AGORAH_ERROR_MESSAGE_A1003); // TODO: This has been disabled for now - https://mainnet-public.mirrornode.hedera.com/api/v1/tokens/0.0.588870/ total supply is 0 but tokens exist
@@ -51,6 +55,9 @@ export async function GetNft(
 				);
 
 				try {
+					if (env.GetEnableErrorStackTrace()) {
+						console.log(`[DEBUG] Metadata: ${JSON.stringify(metaData)}`);
+					}
 					result = FuzzyTokenParser(metaData as FuzzyToken, collectionId, nftSerial);
 				} catch (err: unknown) {
 					ResolveIpfsError(err);
