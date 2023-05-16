@@ -28,6 +28,7 @@ export function FuzzyTokenParser(
 		nft_additional_files: false,
 		nft_properties: null,
 		nft_locales: "",
+		for_sale: false,
 	};
 	if (metadata.image !== undefined) {
 		const cidregex =

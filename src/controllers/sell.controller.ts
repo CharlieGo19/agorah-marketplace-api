@@ -21,7 +21,7 @@ import { platform_pricing } from "@prisma/client";
 import List from "@hashgraph/sdk/lib/transaction/List";
 import { TransactionData } from "./sell.interface";
 
-export async function ListNftForSale(transactionBytes: Uint8Array): Promise<void> {
+export async function ListNftForSale(transactionBytes: Uint8Array): Promise<boolean | undefined> {
 	transactionBytes = new Uint8Array([
 		10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204,
 		155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 8, 24,
@@ -218,9 +218,23 @@ export async function ListNftForSale(transactionBytes: Uint8Array): Promise<void
 		);
 
 		if (isTransactionValid) {
-			console.log("Transaction is valid."); // TODO: Remove
-			/* INSERT TO DATABASE */
-		}
+			try {
+				const createForSale = await prisma.nft_for_sale.create({
+					data: {
+						token_id: BigInt((transactionDetails.nftTokenForTransfer as TokenId).num.low),
+						serial_id: BigInt(transactionDetails.nftSerialForTransfer as bigint),
+						sale_price: new Decimal(Number((transactionDetails.hbarReceiverAmount as Hbar).toBigNumber())),
+						seller_account: (transactionDetails.nftSender as AccountId).num.low,
+					}
+				});
+				console.log("Nft listed for sale.")
+				return true;
+			} catch (error) {
+				throw error;
+			}
+		};
+		console.log("Transaction is valid."); // TODO: Remove
+		/* INSERT TO DATABASE */
 	} catch (err: unknown) {
 		throw err as Error;
 	}
@@ -313,7 +327,7 @@ async function VerifySignedSellTransaction(
 	if (
 		transactionDetails.nftSender === undefined ||
 		transactionDetails.nftSender.toString() !==
-			transactionDetails.transactionID.accountId?.toString()
+		transactionDetails.transactionID.accountId?.toString()
 	) {
 		throw new Error("NftSender does not match the Transaction Payer.");
 	}
