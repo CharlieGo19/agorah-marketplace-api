@@ -27,18 +27,19 @@ model collections {
 model nft {
   token_id             BigInt
   serial_id            BigInt
-  nft_name             String?     @db.VarChar(512)
-  nft_creator          String?     @db.VarChar(128)
+  nft_name             String?       @db.VarChar(512)
+  nft_creator          String?       @db.VarChar(128)
   nft_description      String?
-  nft_file             String      @db.VarChar(1024)
-  nft_file_checksum    String?     @db.VarChar(64)
-  nft_additional_files Boolean     @default(false)
+  nft_file             String        @db.VarChar(1024)
+  nft_file_checksum    String?       @db.VarChar(64)
+  nft_additional_files Boolean       @default(false)
   nft_properties       String?
-  nft_locales          String      @default("en-GB") @db.VarChar(128)
-  collections          collections @relation(fields: [token_id], references: [token_id], onDelete: NoAction, onUpdate: NoAction)
+  nft_locales          String        @default("en-GB") @db.VarChar(128)
+  for_sale             Boolean       @default(false)
+  collections          collections   @relation(fields: [token_id], references: [token_id], onDelete: NoAction, onUpdate: NoAction)
+  nft_for_sale         nft_for_sale?
 
   @@id([token_id, serial_id])
-  @@index([token_id])
 }
 
 model nft_additional_files {
@@ -61,13 +62,18 @@ model platform_metrics {
   @@ignore
 }
 
+model nft_for_sale {
+  token_id       BigInt
+  serial_id      BigInt
+  seller_account BigInt
+  sale_price     Decimal @db.Decimal
+  nft            nft     @relation(fields: [token_id, serial_id], references: [token_id, serial_id], onDelete: NoAction, onUpdate: NoAction, map: "nft_foreign_key")
+
+  @@id([token_id, serial_id])
+}
+
 model platform_pricing {
   service      String   @id
   price        Decimal  @default(0) @db.Decimal
   last_updated DateTime @default(now()) @db.Timestamp(6)
-}
-
-model unsupported_nfts {
-  token_id  BigInt @id
-  requested Int    @default(1)
 }

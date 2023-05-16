@@ -64,24 +64,19 @@ CREATE TABLE IF NOT EXISTS nft_for_sale (
     serial_id BIGINT NOT NULL, 
     seller_account BIGINT NOT NULL,
     sale_price DECIMAL NOT NULL,
+    PRIMARY KEY (token_id, serial_id),
     CONSTRAINT nft_foreign_key 
         FOREIGN KEY (token_id, serial_id) 
         REFERENCES nft(token_id, serial_id) 
         ON DELETE NO ACTION
 );
+
+CREATE TABLE IF NOT EXISTS platform_pricing (
+    service TEXT NOT NULL UNIQUE,
+    price DECIMAL NOT NULL DEFAULT 0,
+    last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (service)
+)
 
 -- Optimisations:
 CREATE INDEX nft_token_id_idx ON nft (token_id);
-
--- Temp until confirmed with Warden
-
-CREATE TABLE IF NOT EXISTS nft_for_sale (
-    token_id BIGINT NOT NULL, 
-    serial_id BIGINT NOT NULL, 
-    seller_account BIGINT NOT NULL,
-    sale_price DECIMAL NOT NULL,
-    CONSTRAINT nft_foreign_key 
-        FOREIGN KEY (token_id, serial_id) 
-        REFERENCES nft(token_id, serial_id) 
-        ON DELETE NO ACTION
-);
