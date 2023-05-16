@@ -19,121 +19,114 @@ import {
 import { Decimal } from "@prisma/client/runtime/library";
 import { platform_pricing } from "@prisma/client";
 import List from "@hashgraph/sdk/lib/transaction/List";
+import { TransactionData } from "./sell.interface";
 
 export async function ListNftForSale(transactionBytes: Uint8Array): Promise<void> {
-	if (await VerifySignedSellTransaction(transactionBytes)) {
-		console.log("Hello World!");
-	} else {
-		console.log("Bad transaction.");
-	}
-}
-
-async function VerifySignedSellTransaction(
-	transactionBytes: Uint8Array
-): Promise<boolean | undefined> {
-	// TODO: Remove
-
 	transactionBytes = new Uint8Array([
-		10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 228, 213, 142, 163, 6, 16, 132, 202,
-		243, 146, 2, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 7, 24,
+		10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204,
+		155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 8, 24,
 		128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24,
 		173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155,
 		160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163,
 		242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160,
 		247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253,
 		240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187,
-		91, 21, 26, 64, 23, 39, 131, 38, 2, 73, 20, 137, 236, 11, 53, 41, 28, 210, 153, 16, 211, 75,
-		10, 241, 156, 63, 138, 243, 147, 32, 22, 179, 62, 84, 212, 199, 156, 81, 230, 65, 99, 254,
-		149, 165, 50, 97, 229, 69, 3, 179, 116, 190, 6, 128, 14, 163, 39, 235, 252, 201, 113, 210,
-		165, 249, 103, 51, 70, 9, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 228, 213,
-		142, 163, 6, 16, 132, 202, 243, 146, 2, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18,
-		6, 8, 0, 16, 0, 24, 7, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19,
+		91, 21, 26, 64, 114, 127, 28, 45, 145, 240, 146, 102, 14, 90, 51, 162, 200, 236, 251, 159,
+		47, 250, 20, 31, 19, 221, 182, 41, 84, 47, 28, 248, 195, 115, 186, 122, 140, 239, 89, 115,
+		49, 238, 49, 97, 235, 107, 50, 15, 18, 132, 205, 106, 90, 116, 121, 2, 67, 9, 88, 101, 50,
+		56, 175, 79, 30, 80, 35, 7, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213,
+		143, 163, 6, 16, 242, 204, 155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18,
+		6, 8, 0, 16, 0, 24, 6, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19,
 		10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9,
 		8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0,
 		16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0,
 		16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166,
 		180, 39, 215, 253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84,
-		235, 90, 0, 110, 187, 91, 21, 26, 64, 23, 39, 131, 38, 2, 73, 20, 137, 236, 11, 53, 41, 28,
-		210, 153, 16, 211, 75, 10, 241, 156, 63, 138, 243, 147, 32, 22, 179, 62, 84, 212, 199, 156,
-		81, 230, 65, 99, 254, 149, 165, 50, 97, 229, 69, 3, 179, 116, 190, 6, 128, 14, 163, 39, 235,
-		252, 201, 113, 210, 165, 249, 103, 51, 70, 9, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27,
-		10, 12, 8, 228, 213, 142, 163, 6, 16, 132, 202, 243, 146, 2, 18, 9, 8, 0, 16, 0, 24, 173,
-		249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 5, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0,
-		114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255, 143, 223, 192,
-		74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24,
-		0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173,
-		249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10,
-		32, 80, 220, 227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8,
-		169, 204, 50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64, 36, 112, 147, 101, 143, 207,
-		168, 152, 86, 112, 205, 208, 31, 105, 191, 45, 22, 59, 222, 214, 71, 171, 131, 48, 92, 159,
-		230, 8, 249, 184, 150, 184, 63, 18, 155, 64, 11, 194, 217, 103, 49, 177, 207, 240, 21, 254,
-		90, 174, 1, 253, 107, 44, 88, 163, 69, 79, 130, 134, 91, 93, 181, 148, 169, 3, 10, 245, 1,
-		42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 228, 213, 142, 163, 6, 16, 132, 202, 243, 146, 2,
-		18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 9, 24, 128, 194,
-		215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249,
-		212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1,
-		16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26,
-		10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4,
-		32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39,
-		9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64,
-		247, 51, 158, 52, 51, 52, 236, 176, 20, 50, 247, 66, 232, 234, 69, 154, 12, 181, 12, 185,
-		219, 59, 156, 10, 232, 78, 248, 173, 188, 133, 67, 194, 140, 156, 87, 54, 7, 207, 133, 182,
-		191, 13, 7, 51, 136, 156, 170, 251, 73, 244, 22, 21, 136, 153, 140, 69, 0, 198, 102, 250,
-		34, 205, 132, 4, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 228, 213, 142, 163,
-		6, 16, 132, 202, 243, 146, 2, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0,
-		16, 0, 24, 5, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9,
-		8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0,
-		16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0,
-		24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0,
-		24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180,
-		39, 215, 253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90,
-		0, 110, 187, 91, 21, 26, 64, 36, 112, 147, 101, 143, 207, 168, 152, 86, 112, 205, 208, 31,
-		105, 191, 45, 22, 59, 222, 214, 71, 171, 131, 48, 92, 159, 230, 8, 249, 184, 150, 184, 63,
-		18, 155, 64, 11, 194, 217, 103, 49, 177, 207, 240, 21, 254, 90, 174, 1, 253, 107, 44, 88,
-		163, 69, 79, 130, 134, 91, 93, 181, 148, 169, 3, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27,
-		10, 12, 8, 228, 213, 142, 163, 6, 16, 132, 202, 243, 146, 2, 18, 9, 8, 0, 16, 0, 24, 173,
-		249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 3, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0,
-		114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255, 143, 223, 192,
-		74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24,
-		0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173,
-		249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10,
-		32, 80, 220, 227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8,
-		169, 204, 50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64, 251, 246, 248, 212, 70, 213,
-		60, 124, 75, 18, 126, 116, 171, 13, 213, 28, 124, 192, 156, 227, 177, 236, 245, 40, 198, 39,
-		74, 28, 16, 194, 97, 255, 3, 209, 187, 99, 107, 172, 123, 112, 125, 137, 78, 62, 156, 249,
-		181, 137, 202, 118, 32, 234, 12, 127, 121, 10, 170, 80, 50, 236, 87, 251, 71, 7, 10, 245, 1,
-		42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 228, 213, 142, 163, 6, 16, 132, 202, 243, 146, 2,
-		18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 7, 24, 128, 194,
-		215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249,
-		212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1,
-		16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26,
-		10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4,
-		32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39,
-		9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64,
-		23, 39, 131, 38, 2, 73, 20, 137, 236, 11, 53, 41, 28, 210, 153, 16, 211, 75, 10, 241, 156,
-		63, 138, 243, 147, 32, 22, 179, 62, 84, 212, 199, 156, 81, 230, 65, 99, 254, 149, 165, 50,
-		97, 229, 69, 3, 179, 116, 190, 6, 128, 14, 163, 39, 235, 252, 201, 113, 210, 165, 249, 103,
-		51, 70, 9,
+		235, 90, 0, 110, 187, 91, 21, 26, 64, 126, 177, 39, 201, 69, 187, 144, 77, 79, 152, 243,
+		105, 206, 160, 27, 109, 119, 240, 153, 42, 0, 59, 250, 231, 219, 140, 178, 171, 157, 12,
+		211, 41, 89, 72, 214, 187, 234, 26, 31, 139, 145, 162, 125, 238, 47, 14, 150, 62, 43, 127,
+		23, 175, 199, 152, 25, 109, 41, 175, 82, 78, 69, 101, 100, 2, 10, 245, 1, 42, 242, 1, 10,
+		135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204, 155, 190, 3, 18, 9, 8, 0,
+		16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 3, 24, 128, 194, 215, 47, 34, 2,
+		8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255,
+		143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144,
+		223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0,
+		16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18,
+		102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39, 9, 158,
+		194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64, 73, 40,
+		154, 62, 161, 74, 50, 57, 55, 179, 62, 219, 184, 81, 116, 58, 71, 208, 225, 115, 107, 70,
+		229, 26, 51, 84, 29, 177, 167, 85, 8, 99, 160, 252, 40, 4, 70, 158, 95, 236, 144, 120, 121,
+		75, 90, 130, 118, 129, 110, 188, 72, 132, 75, 72, 191, 230, 197, 221, 220, 242, 71, 174, 42,
+		13, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242,
+		204, 155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24,
+		6, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0,
+		24, 173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24,
+		155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207,
+		163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155,
+		160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215,
+		253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110,
+		187, 91, 21, 26, 64, 126, 177, 39, 201, 69, 187, 144, 77, 79, 152, 243, 105, 206, 160, 27,
+		109, 119, 240, 153, 42, 0, 59, 250, 231, 219, 140, 178, 171, 157, 12, 211, 41, 89, 72, 214,
+		187, 234, 26, 31, 139, 145, 162, 125, 238, 47, 14, 150, 62, 43, 127, 23, 175, 199, 152, 25,
+		109, 41, 175, 82, 78, 69, 101, 100, 2, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12,
+		8, 203, 213, 143, 163, 6, 16, 242, 204, 155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212,
+		1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 7, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85,
+		10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0,
+		10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39,
+		10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1,
+		18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220,
+		227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204,
+		50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64, 110, 149, 85, 29, 126, 177, 117, 15, 72,
+		166, 218, 59, 99, 126, 127, 226, 86, 143, 89, 104, 152, 12, 199, 148, 190, 48, 152, 94, 118,
+		246, 174, 69, 147, 19, 155, 176, 217, 122, 100, 4, 11, 65, 165, 166, 48, 171, 38, 209, 177,
+		57, 190, 236, 252, 91, 67, 142, 137, 59, 20, 63, 48, 15, 97, 3, 10, 245, 1, 42, 242, 1, 10,
+		135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204, 155, 190, 3, 18, 9, 8, 0,
+		16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 8, 24, 128, 194, 215, 47, 34, 2,
+		8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255,
+		143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144,
+		223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0,
+		16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18,
+		102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39, 9, 158,
+		194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64, 114, 127,
+		28, 45, 145, 240, 146, 102, 14, 90, 51, 162, 200, 236, 251, 159, 47, 250, 20, 31, 19, 221,
+		182, 41, 84, 47, 28, 248, 195, 115, 186, 122, 140, 239, 89, 115, 49, 238, 49, 97, 235, 107,
+		50, 15, 18, 132, 205, 106, 90, 116, 121, 2, 67, 9, 88, 101, 50, 56, 175, 79, 30, 80, 35, 7,
+		10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204,
+		155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 7, 24,
+		128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24,
+		173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155,
+		160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163,
+		242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160,
+		247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253,
+		240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187,
+		91, 21, 26, 64, 110, 149, 85, 29, 126, 177, 117, 15, 72, 166, 218, 59, 99, 126, 127, 226,
+		86, 143, 89, 104, 152, 12, 199, 148, 190, 48, 152, 94, 118, 246, 174, 69, 147, 19, 155, 176,
+		217, 122, 100, 4, 11, 65, 165, 166, 48, 171, 38, 209, 177, 57, 190, 236, 252, 91, 67, 142,
+		137, 59, 20, 63, 48, 15, 97, 3,
 	]);
 
-	let nftTokenForTransfer: TokenId | undefined;
-	let nftSerialForTransfer: bigint | undefined;
-	let nftSender: AccountId | undefined;
-	let nftReceiver: AccountId | undefined;
-	let hbarSender: AccountId | undefined;
-	let hbarSenderAmount: Hbar | undefined;
-	let hbarReceiver: AccountId | undefined;
-	let hbarReceiverAmount: Hbar | undefined;
-	let transactionID: TransactionId | undefined;
-	let transaction: TransferTransaction;
+	const transactionDetails: TransactionData = {
+		nftTokenForTransfer: undefined,
+		nftSerialForTransfer: undefined,
+		nftSender: undefined,
+		nftReceiver: undefined,
+		hbarSender: undefined,
+		hbarSenderAmount: undefined,
+		hbarReceiver: undefined,
+		hbarReceiverAmount: undefined,
+		transactionID: undefined,
+		transaction: undefined,
+	};
 
 	try {
-		transaction = Transaction.fromBytes(transactionBytes) as TransferTransaction;
+		transactionDetails.transaction = Transaction.fromBytes(
+			transactionBytes
+		) as TransferTransaction;
 	} catch (err) {
 		throw new Error("Not valid transaction bytes.");
 	}
 	// Deconstruct transaction object
-	const transactionObject: [string, unknown][] = Object.entries(transaction);
+	const transactionObject: [string, unknown][] = Object.entries(transactionDetails.transaction);
 	let nftCounter = 0;
 	for (const [key, value] of transactionObject) {
 		if (key === "_hbarTransfers") {
@@ -153,18 +146,18 @@ async function VerifySignedSellTransaction(
 					switch (k) {
 						case "accountId":
 							if (String(v) === env.GetAgorahVaultAccountId()) {
-								hbarReceiver = v as AccountId | undefined;
+								transactionDetails.hbarReceiver = v as AccountId | undefined;
 								isSender = false;
 							} else {
-								hbarSender = v as AccountId | undefined;
+								transactionDetails.hbarSender = v as AccountId | undefined;
 								isSender = true;
 							}
 							break;
 						case "amount":
 							if (isSender) {
-								hbarSenderAmount = v as Hbar | undefined;
+								transactionDetails.hbarSenderAmount = v as Hbar | undefined;
 							} else {
-								hbarReceiverAmount = v as Hbar | undefined;
+								transactionDetails.hbarReceiverAmount = v as Hbar | undefined;
 							}
 							break;
 					}
@@ -187,16 +180,24 @@ async function VerifySignedSellTransaction(
 				for (const [nftTransferPropertyKey, nftTransferProperty] of nftTransferProperties) {
 					switch (nftTransferPropertyKey) {
 						case "tokenId":
-							nftTokenForTransfer = nftTransferProperty as TokenId | undefined;
+							transactionDetails.nftTokenForTransfer = nftTransferProperty as
+								| TokenId
+								| undefined;
 							break;
 						case "senderAccountId":
-							nftSender = nftTransferProperty as AccountId | undefined;
+							transactionDetails.nftSender = nftTransferProperty as
+								| AccountId
+								| undefined;
 							break;
 						case "receiverAccountId":
-							nftReceiver = nftTransferProperty as AccountId | undefined;
+							transactionDetails.nftReceiver = nftTransferProperty as
+								| AccountId
+								| undefined;
 							break;
 						case "serialNumber":
-							nftSerialForTransfer = nftTransferProperty as bigint | undefined;
+							transactionDetails.nftSerialForTransfer = nftTransferProperty as
+								| bigint
+								| undefined;
 							break;
 					}
 				}
@@ -206,16 +207,38 @@ async function VerifySignedSellTransaction(
 			if (ListOfTransactions.list.length != 1) {
 				throw new Error("Invalid Transaction ID.");
 			} else {
-				transactionID = ListOfTransactions.list[0];
+				transactionDetails.transactionID = ListOfTransactions.list[0];
 			}
 		}
 	}
 
-	if (transactionID?.accountId === undefined) {
+	try {
+		const isTransactionValid: boolean | undefined = await VerifySignedSellTransaction(
+			transactionDetails
+		);
+
+		if (isTransactionValid) {
+			console.log("Transaction is valid."); // TODO: Remove
+			/* INSERT TO DATABASE */
+		}
+	} catch (err: unknown) {
+		throw err as Error;
+	}
+}
+
+async function VerifySignedSellTransaction(
+	transactionDetails: TransactionData
+): Promise<boolean | undefined> {
+	// TODO: Remove
+
+	if (transactionDetails.transactionID?.accountId === undefined) {
 		throw new Error("Transaction ID does not have a valid Account ID.");
 	}
 
-	if (transactionID?.accountId?.toString() !== nftSender?.toString()) {
+	if (
+		transactionDetails.transactionID?.accountId?.toString() !==
+		transactionDetails.nftSender?.toString()
+	) {
 		throw new Error("Transaction ID does not match Payer Account ID.");
 	}
 
@@ -225,7 +248,7 @@ async function VerifySignedSellTransaction(
 	const limitForLatestPrice = new Date();
 	limitForLatestPrice.setHours(limitForLatestPrice.getHours() - 1);
 
-	const transactionEpoch = (transactionID as TransactionId).validStart
+	const transactionEpoch = (transactionDetails.transactionID as TransactionId).validStart
 		?.toDate()
 		.getTime() as number;
 
@@ -280,31 +303,25 @@ async function VerifySignedSellTransaction(
 		throw new Error("Pricing data not set, AGORAH ERROR");
 	}
 
-	// console.log(`
-	// Token: ${nftTokenForTransfer?.toString()}
-	// Serial: ${nftSerialForTransfer?.toString()}
-	// Sender: ${nftSender?.toString()} - ${transactionID.accountId?.toString()}
-	// Receiver: ${nftReceiver?.toString()}
-	// Hbar Sender: ${hbarSender?.toString()}
-	// Hbar Sender Amount: ${hbarSenderAmount?.toString()}
-	// Hbar Receiver: ${hbarReceiver?.toString()}
-	// Hbar Receiver Amount: ${hbarReceiverAmount?.toString()}
-	// Transaction ID: ${transactionID?.toString()}
-	// Transaction Epoch: ${transactionEpoch}
-	// Limit For Sale: ${limitForValidPrice.getTime()}
-	// Limit For Latest Price: ${limitForLatestPrice.getTime()}
-
-	// `);
-
-	if (nftReceiver === undefined || nftReceiver.toString() !== env.GetAgorahVaultAccountId()) {
+	if (
+		transactionDetails.nftReceiver === undefined ||
+		transactionDetails.nftReceiver.toString() !== env.GetAgorahVaultAccountId()
+	) {
 		throw new Error("Transaction did not include a valid AGORAH Vault.");
 	}
 
-	if (nftSender === undefined || nftSender.toString() !== transactionID.accountId?.toString()) {
+	if (
+		transactionDetails.nftSender === undefined ||
+		transactionDetails.nftSender.toString() !==
+			transactionDetails.transactionID.accountId?.toString()
+	) {
 		throw new Error("NftSender does not match the Transaction Payer.");
 	}
 
-	if (nftTokenForTransfer === undefined || nftSerialForTransfer === undefined) {
+	if (
+		transactionDetails.nftTokenForTransfer === undefined ||
+		transactionDetails.nftSerialForTransfer === undefined
+	) {
 		throw new Error("NFT Token transaction data incomplete.");
 	}
 
@@ -327,32 +344,33 @@ async function VerifySignedSellTransaction(
 		throw new Error("Couldn't set listing price, AGORAH ERROR");
 	}
 
-	if (hbarSender === undefined && hbarSender !== transactionID.accountId) {
+	if (
+		transactionDetails.hbarSender === undefined &&
+		transactionDetails.hbarSender !== transactionDetails.transactionID.accountId
+	) {
 		throw new Error("HBar sender does not match the Transaction Payer.");
 	}
 
-	if (hbarReceiver === undefined || hbarReceiver.toString() !== env.GetAgorahVaultAccountId()) {
+	if (
+		transactionDetails.hbarReceiver === undefined ||
+		transactionDetails.hbarReceiver.toString() !== env.GetAgorahVaultAccountId()
+	) {
 		throw new Error("HBar reciever is not a valid AGORAH vault.");
 	}
 
-	if (Number(listing_price.toString()) > Number((hbarReceiverAmount as Hbar).toBigNumber())) {
+	if (
+		Number(listing_price.toString()) >
+		Number((transactionDetails.hbarReceiverAmount as Hbar).toBigNumber())
+	) {
 		throw new Error("Not enough HBARS to cover the NFT listing price.");
 	}
-	console.log(
-		`${Number((hbarSenderAmount as Hbar).toBigNumber()) * -1} - ${Number(
-			(hbarSenderAmount as Hbar).toBigNumber()
-		)}`
-	);
+
 	if (
-		Number((hbarSenderAmount as Hbar).toBigNumber()) * -1 !==
-		Number((hbarReceiverAmount as Hbar).toBigNumber())
+		Number((transactionDetails.hbarSenderAmount as Hbar).toBigNumber()) * -1 !==
+		Number((transactionDetails.hbarReceiverAmount as Hbar).toBigNumber())
 	) {
 		throw new Error("HBar sent and recieved do not match.");
 	}
 
-	/*****
-	 *
-	 * EXECUTE TRANSFER AND INSERT IN TO DB.
-	 */
 	return true;
 }
