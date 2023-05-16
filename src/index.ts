@@ -12,6 +12,8 @@ import nftsRouter from "./routes/nfts";
 import nftRouter from "./routes/nft";
 import searchRouter from "./routes/search";
 import userCurationRouter from "./routes/curation";
+import buyRouter from "./routes/buy";
+import sellRouter from "./routes/sell";
 
 dotenv.config();
 // TODO: Setup TLS certs.
@@ -44,6 +46,8 @@ app.use(apiVersion, nftsRouter);
 app.use(apiVersion, nftRouter);
 app.use(apiVersion, searchRouter);
 app.use(apiVersion, userCurationRouter);
+app.use(apiVersion, buyRouter);
+app.use(apiVersion, sellRouter);
 
 app.use((err: Error | MirrorNodeError, req: Request, res: Response, next: NextFunction) => {
 	errorHandler(err, req, res, next);

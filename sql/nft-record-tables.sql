@@ -72,3 +72,16 @@ CREATE TABLE IF NOT EXISTS nft_for_sale (
 
 -- Optimisations:
 CREATE INDEX nft_token_id_idx ON nft (token_id);
+
+-- Temp until confirmed with Warden
+
+CREATE TABLE IF NOT EXISTS nft_for_sale (
+    token_id BIGINT NOT NULL, 
+    serial_id BIGINT NOT NULL, 
+    seller_account BIGINT NOT NULL,
+    sale_price DECIMAL NOT NULL,
+    CONSTRAINT nft_foreign_key 
+        FOREIGN KEY (token_id, serial_id) 
+        REFERENCES nft(token_id, serial_id) 
+        ON DELETE NO ACTION
+);

@@ -3,6 +3,8 @@ export class Env {
 	#mirrorProviderApiKeyI: string;
 	#mirrorProviderRestApiI: string;
 	#agorahIpfsDomain: string;
+	#agorahVaultAccountId: string;
+	#agorahValultPrivateKey: string;
 	#nftRequestRangeLimit: number;
 	#enableStackTrace: boolean;
 	#enableUserInputErrorTrace: boolean;
@@ -42,6 +44,24 @@ export class Env {
 			process.exit();
 		} else {
 			this.#agorahIpfsDomain = process.env.AGORAH_IPFS_CDN;
+		}
+
+		if (!process.env.AGORAH_NFT_VAULT_ACCOUNT_ID) {
+			console.log(
+				`${dateTime} AGORAH_NFT_VAULT_ACCOUNT_ID UNDEFINED: Can not set sensible default, exiting...`
+			);
+			process.exit();
+		} else {
+			this.#agorahVaultAccountId = process.env.AGORAH_NFT_VAULT_ACCOUNT_ID;
+		}
+
+		if (!process.env.AGORAH_NFT_VAULT_PRIVATE_KEY) {
+			console.log(
+				`${dateTime} AGORAH_NFT_VAULT_PRIVATE_KEY UNDEFINED: Can not set sensible default, exiting...`
+			);
+			process.exit();
+		} else {
+			this.#agorahValultPrivateKey = process.env.AGORAH_NFT_VAULT_PRIVATE_KEY;
 		}
 
 		if (!process.env.NFT_REQUEST_RANGE_LIMIT) {
@@ -92,7 +112,7 @@ export class Env {
 			}
 		}
 	}
-	//
+
 	GetExpressApiPort(): string {
 		return this.#expressApiPort;
 	}
@@ -106,6 +126,14 @@ export class Env {
 
 	GetAgorahIPFSDomain(): string {
 		return this.#agorahIpfsDomain;
+	}
+
+	GetAgorahVaultAccountId(): string {
+		return this.#agorahVaultAccountId;
+	}
+
+	GetAgorahVaultPrivateKey(): string {
+		return this.#agorahValultPrivateKey;
 	}
 
 	GetNftRequestRangeLimit(): number {

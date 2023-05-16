@@ -1,3 +1,8 @@
+// Agorah Service DB fields.
+export const AGORAH_CURRENT_NFT_LISTING_PRICE = "list_nft_price";
+export const HBAR_USD_PRICE = "hbar_usd_price";
+export const HBAR_USD_PRICE_PREVIOUS = "hbar_usd_price_previous";
+
 // DB Related Errors
 export const PRIMSA_UNACCOUNTED_FOR_ERROR = "unknown error while inserting into";
 export const PRISMA_CLIENT_CRASH =

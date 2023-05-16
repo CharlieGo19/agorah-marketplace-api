@@ -3,6 +3,7 @@ import { env } from "../index";
 import axios from "axios";
 import { ResolveMirrorError } from "./error.handler";
 import { MirrorNodeAccountNfts } from "../controllers/curation.interface";
+import { MirrorNodeNftSerial } from "../controllers/nft.interface";
 
 export class MirrorNode {
 	ArkhiaApiVersion = "/api/v1"; // this is not part of the env. var because of how Arkhia give the next link.
@@ -35,6 +36,22 @@ export class MirrorNode {
 			const collectionIdFull = `0.0.${collectionId}`;
 			const getData = await axios.get(
 				`${this.ArkhiaApiVersion}/tokens/${collectionIdFull}/nfts?limit=${limit}&order=asc&serialnumber=gte%3A${from}`,
+				this.#axiosConfig
+			);
+			return getData.data;
+		} catch (err) {
+			ResolveMirrorError(err);
+		}
+	}
+
+	async MirrorRequestNftSerial(
+		collectionId: string,
+		serial: string
+	): Promise<MirrorNodeNftSerial | undefined> {
+		try {
+			const collectionIdFull = `0.0.${collectionId}`;
+			const getData = await axios.get(
+				`${this.ArkhiaApiVersion}/tokens/${collectionIdFull}/nfts/${serial}`,
 				this.#axiosConfig
 			);
 			return getData.data;
