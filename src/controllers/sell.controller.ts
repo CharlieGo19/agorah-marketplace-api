@@ -13,6 +13,40 @@ import { MirrorNode } from "../utils/mnode";
 import { MirrorNodeNftSerial } from "./nft.interface";
 import {
 	AGORAH_CURRENT_NFT_LISTING_PRICE,
+	AGORAH_ERROR_CODE_A1005,
+	AGORAH_ERROR_CODE_A1006,
+	AGORAH_ERROR_CODE_A1007,
+	AGORAH_ERROR_CODE_A1008,
+	AGORAH_ERROR_CODE_A1009,
+	AGORAH_ERROR_CODE_A1010,
+	AGORAH_ERROR_CODE_A1011,
+	AGORAH_ERROR_CODE_A1012,
+	AGORAH_ERROR_CODE_A1013,
+	AGORAH_ERROR_CODE_A1014,
+	AGORAH_ERROR_CODE_A1015,
+	AGORAH_ERROR_CODE_A1016,
+	AGORAH_ERROR_CODE_A1017,
+	AGORAH_ERROR_CODE_A1018,
+	AGORAH_ERROR_CODE_A1019,
+	AGORAH_ERROR_CODE_A1020,
+	AGORAH_ERROR_CODE_A1021,
+	AGORAH_ERROR_MESSAGE_A1005,
+	AGORAH_ERROR_MESSAGE_A1006,
+	AGORAH_ERROR_MESSAGE_A1007,
+	AGORAH_ERROR_MESSAGE_A1008,
+	AGORAH_ERROR_MESSAGE_A1009,
+	AGORAH_ERROR_MESSAGE_A1010,
+	AGORAH_ERROR_MESSAGE_A1011,
+	AGORAH_ERROR_MESSAGE_A1012,
+	AGORAH_ERROR_MESSAGE_A1013,
+	AGORAH_ERROR_MESSAGE_A1014,
+	AGORAH_ERROR_MESSAGE_A1015,
+	AGORAH_ERROR_MESSAGE_A1016,
+	AGORAH_ERROR_MESSAGE_A1017,
+	AGORAH_ERROR_MESSAGE_A1018,
+	AGORAH_ERROR_MESSAGE_A1019,
+	AGORAH_ERROR_MESSAGE_A1020,
+	AGORAH_ERROR_MESSAGE_A1021,
 	HBAR_USD_PRICE,
 	HBAR_USD_PRICE_PREVIOUS,
 } from "../utils/constants";
@@ -20,89 +54,11 @@ import { Decimal } from "@prisma/client/runtime/library";
 import { platform_pricing } from "@prisma/client";
 import List from "@hashgraph/sdk/lib/transaction/List";
 import { TransactionData } from "./sell.interface";
+import { AgorahError, PrismaError, ResolveAgorahError, ResolvePrismaError } from "../utils/error.handler";
 
 export async function ListNftForSale(transactionBytes: Uint8Array): Promise<boolean | undefined> {
 	transactionBytes = new Uint8Array([
-		10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204,
-		155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 8, 24,
-		128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24,
-		173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155,
-		160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163,
-		242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160,
-		247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253,
-		240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187,
-		91, 21, 26, 64, 114, 127, 28, 45, 145, 240, 146, 102, 14, 90, 51, 162, 200, 236, 251, 159,
-		47, 250, 20, 31, 19, 221, 182, 41, 84, 47, 28, 248, 195, 115, 186, 122, 140, 239, 89, 115,
-		49, 238, 49, 97, 235, 107, 50, 15, 18, 132, 205, 106, 90, 116, 121, 2, 67, 9, 88, 101, 50,
-		56, 175, 79, 30, 80, 35, 7, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213,
-		143, 163, 6, 16, 242, 204, 155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18,
-		6, 8, 0, 16, 0, 24, 6, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19,
-		10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9,
-		8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0,
-		16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0,
-		16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166,
-		180, 39, 215, 253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84,
-		235, 90, 0, 110, 187, 91, 21, 26, 64, 126, 177, 39, 201, 69, 187, 144, 77, 79, 152, 243,
-		105, 206, 160, 27, 109, 119, 240, 153, 42, 0, 59, 250, 231, 219, 140, 178, 171, 157, 12,
-		211, 41, 89, 72, 214, 187, 234, 26, 31, 139, 145, 162, 125, 238, 47, 14, 150, 62, 43, 127,
-		23, 175, 199, 152, 25, 109, 41, 175, 82, 78, 69, 101, 100, 2, 10, 245, 1, 42, 242, 1, 10,
-		135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204, 155, 190, 3, 18, 9, 8, 0,
-		16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 3, 24, 128, 194, 215, 47, 34, 2,
-		8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255,
-		143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144,
-		223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0,
-		16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18,
-		102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39, 9, 158,
-		194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64, 73, 40,
-		154, 62, 161, 74, 50, 57, 55, 179, 62, 219, 184, 81, 116, 58, 71, 208, 225, 115, 107, 70,
-		229, 26, 51, 84, 29, 177, 167, 85, 8, 99, 160, 252, 40, 4, 70, 158, 95, 236, 144, 120, 121,
-		75, 90, 130, 118, 129, 110, 188, 72, 132, 75, 72, 191, 230, 197, 221, 220, 242, 71, 174, 42,
-		13, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242,
-		204, 155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24,
-		6, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0,
-		24, 173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24,
-		155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207,
-		163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155,
-		160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215,
-		253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110,
-		187, 91, 21, 26, 64, 126, 177, 39, 201, 69, 187, 144, 77, 79, 152, 243, 105, 206, 160, 27,
-		109, 119, 240, 153, 42, 0, 59, 250, 231, 219, 140, 178, 171, 157, 12, 211, 41, 89, 72, 214,
-		187, 234, 26, 31, 139, 145, 162, 125, 238, 47, 14, 150, 62, 43, 127, 23, 175, 199, 152, 25,
-		109, 41, 175, 82, 78, 69, 101, 100, 2, 10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12,
-		8, 203, 213, 143, 163, 6, 16, 242, 204, 155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212,
-		1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 7, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85,
-		10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0,
-		10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39,
-		10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1,
-		18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220,
-		227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204,
-		50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64, 110, 149, 85, 29, 126, 177, 117, 15, 72,
-		166, 218, 59, 99, 126, 127, 226, 86, 143, 89, 104, 152, 12, 199, 148, 190, 48, 152, 94, 118,
-		246, 174, 69, 147, 19, 155, 176, 217, 122, 100, 4, 11, 65, 165, 166, 48, 171, 38, 209, 177,
-		57, 190, 236, 252, 91, 67, 142, 137, 59, 20, 63, 48, 15, 97, 3, 10, 245, 1, 42, 242, 1, 10,
-		135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204, 155, 190, 3, 18, 9, 8, 0,
-		16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 8, 24, 128, 194, 215, 47, 34, 2,
-		8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 16, 255,
-		143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144,
-		223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0,
-		16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18,
-		102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253, 240, 189, 49, 39, 9, 158,
-		194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187, 91, 21, 26, 64, 114, 127,
-		28, 45, 145, 240, 146, 102, 14, 90, 51, 162, 200, 236, 251, 159, 47, 250, 20, 31, 19, 221,
-		182, 41, 84, 47, 28, 248, 195, 115, 186, 122, 140, 239, 89, 115, 49, 238, 49, 97, 235, 107,
-		50, 15, 18, 132, 205, 106, 90, 116, 121, 2, 67, 9, 88, 101, 50, 56, 175, 79, 30, 80, 35, 7,
-		10, 245, 1, 42, 242, 1, 10, 135, 1, 10, 27, 10, 12, 8, 203, 213, 143, 163, 6, 16, 242, 204,
-		155, 190, 3, 18, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 7, 24,
-		128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24,
-		173, 249, 212, 1, 16, 255, 143, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155,
-		160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163,
-		242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 173, 249, 212, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160,
-		247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 80, 220, 227, 18, 166, 180, 39, 215, 253,
-		240, 189, 49, 39, 9, 158, 194, 79, 147, 37, 8, 169, 204, 50, 148, 84, 235, 90, 0, 110, 187,
-		91, 21, 26, 64, 110, 149, 85, 29, 126, 177, 117, 15, 72, 166, 218, 59, 99, 126, 127, 226,
-		86, 143, 89, 104, 152, 12, 199, 148, 190, 48, 152, 94, 118, 246, 174, 69, 147, 19, 155, 176,
-		217, 122, 100, 4, 11, 65, 165, 166, 48, 171, 38, 209, 177, 57, 190, 236, 252, 91, 67, 142,
-		137, 59, 20, 63, 48, 15, 97, 3,
+		10, 244, 1, 42, 241, 1, 10, 134, 1, 10, 26, 10, 11, 8, 201, 142, 148, 163, 6, 16, 196, 166, 144, 81, 18, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 7, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 16, 255, 143, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 0, 94, 12, 159, 147, 13, 238, 22, 142, 242, 131, 109, 205, 204, 254, 57, 97, 197, 115, 117, 127, 238, 130, 232, 189, 110, 134, 54, 222, 54, 147, 138, 26, 64, 250, 55, 181, 103, 32, 236, 229, 78, 47, 217, 160, 241, 172, 150, 90, 211, 238, 68, 139, 194, 237, 130, 207, 97, 233, 44, 1, 15, 226, 22, 248, 153, 34, 49, 21, 99, 89, 247, 158, 149, 44, 199, 76, 75, 171, 244, 208, 187, 154, 40, 150, 34, 109, 4, 218, 85, 217, 9, 179, 34, 169, 169, 76, 8, 10, 244, 1, 42, 241, 1, 10, 134, 1, 10, 26, 10, 11, 8, 201, 142, 148, 163, 6, 16, 196, 166, 144, 81, 18, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 9, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 16, 255, 143, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 0, 94, 12, 159, 147, 13, 238, 22, 142, 242, 131, 109, 205, 204, 254, 57, 97, 197, 115, 117, 127, 238, 130, 232, 189, 110, 134, 54, 222, 54, 147, 138, 26, 64, 218, 113, 73, 136, 137, 69, 1, 214, 83, 111, 247, 131, 211, 107, 174, 153, 93, 82, 52, 8, 188, 201, 111, 20, 13, 187, 161, 80, 44, 194, 37, 132, 5, 166, 38, 33, 219, 11, 249, 122, 241, 39, 12, 51, 226, 179, 185, 120, 195, 113, 85, 127, 194, 162, 183, 216, 4, 44, 229, 238, 131, 71, 185, 5, 10, 244, 1, 42, 241, 1, 10, 134, 1, 10, 26, 10, 11, 8, 201, 142, 148, 163, 6, 16, 196, 166, 144, 81, 18, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 3, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 16, 255, 143, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 0, 94, 12, 159, 147, 13, 238, 22, 142, 242, 131, 109, 205, 204, 254, 57, 97, 197, 115, 117, 127, 238, 130, 232, 189, 110, 134, 54, 222, 54, 147, 138, 26, 64, 24, 211, 168, 157, 25, 136, 237, 246, 125, 54, 150, 18, 142, 237, 48, 23, 45, 177, 190, 57, 115, 72, 48, 131, 102, 97, 2, 247, 12, 226, 12, 151, 82, 210, 125, 72, 99, 80, 232, 18, 131, 90, 147, 246, 153, 57, 74, 20, 44, 169, 200, 57, 179, 176, 57, 109, 221, 215, 120, 135, 171, 239, 112, 9, 10, 244, 1, 42, 241, 1, 10, 134, 1, 10, 26, 10, 11, 8, 201, 142, 148, 163, 6, 16, 196, 166, 144, 81, 18, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 5, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 16, 255, 143, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 0, 94, 12, 159, 147, 13, 238, 22, 142, 242, 131, 109, 205, 204, 254, 57, 97, 197, 115, 117, 127, 238, 130, 232, 189, 110, 134, 54, 222, 54, 147, 138, 26, 64, 179, 88, 186, 168, 31, 72, 37, 237, 181, 9, 159, 68, 217, 60, 41, 6, 155, 134, 151, 131, 245, 181, 21, 207, 228, 157, 4, 107, 86, 219, 127, 3, 25, 207, 165, 134, 4, 4, 238, 182, 164, 148, 226, 114, 110, 19, 48, 83, 27, 161, 116, 133, 217, 124, 165, 156, 220, 58, 197, 111, 195, 75, 52, 14, 10, 244, 1, 42, 241, 1, 10, 134, 1, 10, 26, 10, 11, 8, 201, 142, 148, 163, 6, 16, 196, 166, 144, 81, 18, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 3, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 16, 255, 143, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 0, 94, 12, 159, 147, 13, 238, 22, 142, 242, 131, 109, 205, 204, 254, 57, 97, 197, 115, 117, 127, 238, 130, 232, 189, 110, 134, 54, 222, 54, 147, 138, 26, 64, 24, 211, 168, 157, 25, 136, 237, 246, 125, 54, 150, 18, 142, 237, 48, 23, 45, 177, 190, 57, 115, 72, 48, 131, 102, 97, 2, 247, 12, 226, 12, 151, 82, 210, 125, 72, 99, 80, 232, 18, 131, 90, 147, 246, 153, 57, 74, 20, 44, 169, 200, 57, 179, 176, 57, 109, 221, 215, 120, 135, 171, 239, 112, 9, 10, 244, 1, 42, 241, 1, 10, 134, 1, 10, 26, 10, 11, 8, 201, 142, 148, 163, 6, 16, 196, 166, 144, 81, 18, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 9, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 16, 255, 143, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 0, 94, 12, 159, 147, 13, 238, 22, 142, 242, 131, 109, 205, 204, 254, 57, 97, 197, 115, 117, 127, 238, 130, 232, 189, 110, 134, 54, 222, 54, 147, 138, 26, 64, 218, 113, 73, 136, 137, 69, 1, 214, 83, 111, 247, 131, 211, 107, 174, 153, 93, 82, 52, 8, 188, 201, 111, 20, 13, 187, 161, 80, 44, 194, 37, 132, 5, 166, 38, 33, 219, 11, 249, 122, 241, 39, 12, 51, 226, 179, 185, 120, 195, 113, 85, 127, 194, 162, 183, 216, 4, 44, 229, 238, 131, 71, 185, 5, 10, 244, 1, 42, 241, 1, 10, 134, 1, 10, 26, 10, 11, 8, 201, 142, 148, 163, 6, 16, 196, 166, 144, 81, 18, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 24, 0, 18, 6, 8, 0, 16, 0, 24, 8, 24, 128, 194, 215, 47, 34, 2, 8, 120, 50, 0, 114, 85, 10, 42, 10, 19, 10, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 16, 128, 144, 223, 192, 74, 24, 0, 10, 19, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 16, 255, 143, 223, 192, 74, 24, 0, 18, 39, 10, 9, 8, 0, 16, 0, 24, 207, 163, 242, 1, 26, 26, 10, 9, 8, 0, 16, 0, 24, 255, 158, 248, 1, 18, 9, 8, 0, 16, 0, 24, 155, 160, 247, 1, 24, 4, 32, 0, 18, 102, 10, 100, 10, 32, 0, 94, 12, 159, 147, 13, 238, 22, 142, 242, 131, 109, 205, 204, 254, 57, 97, 197, 115, 117, 127, 238, 130, 232, 189, 110, 134, 54, 222, 54, 147, 138, 26, 64, 119, 127, 235, 110, 212, 174, 209, 236, 216, 68, 15, 62, 48, 175, 180, 254, 67, 127, 76, 7, 72, 66, 120, 249, 61, 165, 60, 111, 206, 108, 46, 205, 186, 33, 83, 158, 123, 209, 172, 149, 26, 127, 181, 162, 246, 58, 45, 76, 56, 160, 216, 86, 10, 171, 116, 165, 146, 233, 119, 241, 144, 178, 154, 6,
 	]);
 
 	const transactionDetails: TransactionData = {
@@ -123,7 +79,8 @@ export async function ListNftForSale(transactionBytes: Uint8Array): Promise<bool
 			transactionBytes
 		) as TransferTransaction;
 	} catch (err) {
-		throw new Error("Not valid transaction bytes.");
+		//throw new Error("Not valid transaction bytes.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1018, AGORAH_ERROR_MESSAGE_A1018, AGORAH_ERROR_MESSAGE_A1018);
 	}
 	// Deconstruct transaction object
 	const transactionObject: [string, unknown][] = Object.entries(transactionDetails.transaction);
@@ -134,7 +91,8 @@ export async function ListNftForSale(transactionBytes: Uint8Array): Promise<bool
 			const hbarTransfersObject: [string, unknown][] = Object.entries(hbarTransfers);
 
 			if (hbarTransfersObject.length != 2) {
-				throw new Error("Not valid number hbar transfers");
+				//throw new Error("Not valid number hbar transfers");
+				throw new AgorahError(AGORAH_ERROR_CODE_A1019, AGORAH_ERROR_MESSAGE_A1019, AGORAH_ERROR_MESSAGE_A1019);
 			}
 
 			for (const [, hbarTransferValue] of hbarTransfersObject) {
@@ -164,16 +122,18 @@ export async function ListNftForSale(transactionBytes: Uint8Array): Promise<bool
 				}
 			}
 		} else if (key === "_nftTransfers") {
-			nftCounter++;
-			if (nftCounter > 1) {
-				throw new Error("More than one NFT transfer in transaction.");
-			}
 
 			const nftTransferObject: [string, unknown][] = Object.entries(
 				value as TokenNftTransferMap
 			);
 
+
 			for (const [, value] of nftTransferObject) {
+				nftCounter++;
+				if (nftCounter > 1) {
+					//throw new Error("More than one NFT transfer in transaction.");
+					throw new AgorahError(AGORAH_ERROR_CODE_A1020, AGORAH_ERROR_MESSAGE_A1020, AGORAH_ERROR_MESSAGE_A1020);
+				}
 				const nftTransfer: NftTransfer = value as NftTransfer;
 				const nftTransferProperties: [string, unknown][] = Object.entries(nftTransfer);
 
@@ -205,7 +165,8 @@ export async function ListNftForSale(transactionBytes: Uint8Array): Promise<bool
 		} else if (key === "_transactionIds") {
 			const ListOfTransactions: List<TransactionId> = value as List<TransactionId>;
 			if (ListOfTransactions.list.length != 1) {
-				throw new Error("Invalid Transaction ID.");
+				//throw new Error("Invalid Transaction ID.");
+				throw new AgorahError(AGORAH_ERROR_CODE_A1021, AGORAH_ERROR_MESSAGE_A1021, AGORAH_ERROR_MESSAGE_A1021);
 			} else {
 				transactionDetails.transactionID = ListOfTransactions.list[0];
 			}
@@ -230,13 +191,20 @@ export async function ListNftForSale(transactionBytes: Uint8Array): Promise<bool
 				console.log("Nft listed for sale.")
 				return true;
 			} catch (error) {
-				throw error;
+				await ResolvePrismaError(error, null);
 			}
 		};
-		console.log("Transaction is valid."); // TODO: Remove
 		/* INSERT TO DATABASE */
 	} catch (err: unknown) {
-		throw err as Error;
+		if (
+			err instanceof PrismaError ||
+			err instanceof AgorahError
+		) {
+			// Throw the err, as it's already been resolved.
+			throw err;
+		} else if (err instanceof Error) {
+			ResolveAgorahError(err);
+		}
 	}
 }
 
@@ -246,14 +214,16 @@ async function VerifySignedSellTransaction(
 	// TODO: Remove
 
 	if (transactionDetails.transactionID?.accountId === undefined) {
-		throw new Error("Transaction ID does not have a valid Account ID.");
+		//throw new Error("Transaction ID does not have a valid Account ID.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1006, AGORAH_ERROR_MESSAGE_A1006, AGORAH_ERROR_MESSAGE_A1006);
 	}
 
 	if (
 		transactionDetails.transactionID?.accountId?.toString() !==
 		transactionDetails.nftSender?.toString()
 	) {
-		throw new Error("Transaction ID does not match Payer Account ID.");
+		//throw new Error("Transaction ID does not match Payer Account ID.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1007, AGORAH_ERROR_MESSAGE_A1007, AGORAH_ERROR_MESSAGE_A1007);
 	}
 
 	const limitForValidPrice = new Date();
@@ -267,7 +237,8 @@ async function VerifySignedSellTransaction(
 		.getTime() as number;
 
 	if (transactionEpoch < limitForValidPrice.getTime()) {
-		throw new Error("Transaction no longer valid, AGORAH ERROR");
+		//throw new Error("Transaction no longer valid, AGORAH ERROR");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1005, AGORAH_ERROR_MESSAGE_A1005, AGORAH_ERROR_MESSAGE_A1005);
 	}
 
 	let hbar_usd_price: Decimal | undefined;
@@ -276,6 +247,7 @@ async function VerifySignedSellTransaction(
 	let hbar_usd_price_previous_last_updated: number | undefined;
 	let list_nft_price: Decimal | undefined;
 
+	// TODO try-catch
 	const agorahSellPricing: platform_pricing[] = await prisma.platform_pricing.findMany({
 		where: {
 			service: {
@@ -286,7 +258,8 @@ async function VerifySignedSellTransaction(
 
 	// Transaction EPOCH is valid, we can get the data from the DB.
 	if (agorahSellPricing.length != 3) {
-		throw new Error("Invalid pricing data.");
+		//throw new Error("Invalid pricing data.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1008, AGORAH_ERROR_MESSAGE_A1008, AGORAH_ERROR_MESSAGE_A1008);
 	}
 
 	for (const pricing of agorahSellPricing) {
@@ -314,29 +287,35 @@ async function VerifySignedSellTransaction(
 		hbar_usd_price_previous_last_updated === undefined ||
 		list_nft_price === undefined
 	) {
-		throw new Error("Pricing data not set, AGORAH ERROR");
+		//throw new Error("Pricing data not set, AGORAH ERROR");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1009, AGORAH_ERROR_MESSAGE_A1009, AGORAH_ERROR_MESSAGE_A1009);
 	}
 
 	if (
 		transactionDetails.nftReceiver === undefined ||
 		transactionDetails.nftReceiver.toString() !== env.GetAgorahVaultAccountId()
 	) {
-		throw new Error("Transaction did not include a valid AGORAH Vault.");
+		//throw new Error("Transaction did not include a valid AGORAH Vault.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1010, AGORAH_ERROR_MESSAGE_A1010, AGORAH_ERROR_MESSAGE_A1010);
 	}
 
+	console.log(transactionDetails.hbarSender);
+	console.log(transactionDetails.transactionID.accountId);
 	if (
-		transactionDetails.nftSender === undefined ||
-		transactionDetails.nftSender.toString() !==
+		transactionDetails.hbarSender === undefined ||
+		transactionDetails.hbarSender.toString() !==
 		transactionDetails.transactionID.accountId?.toString()
 	) {
-		throw new Error("NftSender does not match the Transaction Payer.");
+		//throw new Error("NftSender does not match the Transaction Payer.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1011, AGORAH_ERROR_MESSAGE_A1011, AGORAH_ERROR_MESSAGE_A1011);
 	}
 
 	if (
 		transactionDetails.nftTokenForTransfer === undefined ||
 		transactionDetails.nftSerialForTransfer === undefined
 	) {
-		throw new Error("NFT Token transaction data incomplete.");
+		//throw new Error("NFT Token transaction data incomplete.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1012, AGORAH_ERROR_MESSAGE_A1012, AGORAH_ERROR_MESSAGE_A1012);
 	}
 
 	let listing_price: Decimal = new Decimal(0);
@@ -355,35 +334,40 @@ async function VerifySignedSellTransaction(
 	// console.log(`Listing Price: ${listing_price.toString()}`);
 
 	if (listing_price.isZero()) {
-		throw new Error("Couldn't set listing price, AGORAH ERROR");
+		//throw new Error("Couldn't set listing price, AGORAH ERROR");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1013, AGORAH_ERROR_MESSAGE_A1013, AGORAH_ERROR_MESSAGE_A1013);
 	}
 
 	if (
 		transactionDetails.hbarSender === undefined &&
 		transactionDetails.hbarSender !== transactionDetails.transactionID.accountId
 	) {
-		throw new Error("HBar sender does not match the Transaction Payer.");
+		//throw new Error("HBar sender does not match the Transaction Payer.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1014, AGORAH_ERROR_MESSAGE_A1014, AGORAH_ERROR_MESSAGE_A1014);
 	}
 
 	if (
 		transactionDetails.hbarReceiver === undefined ||
 		transactionDetails.hbarReceiver.toString() !== env.GetAgorahVaultAccountId()
 	) {
-		throw new Error("HBar reciever is not a valid AGORAH vault.");
+		//throw new Error("HBar reciever is not a valid AGORAH vault.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1015, AGORAH_ERROR_MESSAGE_A1015, AGORAH_ERROR_MESSAGE_A1015);
 	}
 
 	if (
 		Number(listing_price.toString()) >
 		Number((transactionDetails.hbarReceiverAmount as Hbar).toBigNumber())
 	) {
-		throw new Error("Not enough HBARS to cover the NFT listing price.");
+		//throw new Error("Not enough HBARS to cover the NFT listing price.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1016, AGORAH_ERROR_MESSAGE_A1016, AGORAH_ERROR_MESSAGE_A1016);
 	}
 
 	if (
 		Number((transactionDetails.hbarSenderAmount as Hbar).toBigNumber()) * -1 !==
 		Number((transactionDetails.hbarReceiverAmount as Hbar).toBigNumber())
 	) {
-		throw new Error("HBar sent and recieved do not match.");
+		//throw new Error("HBar sent and recieved do not match.");
+		throw new AgorahError(AGORAH_ERROR_CODE_A1017, AGORAH_ERROR_MESSAGE_A1017, AGORAH_ERROR_MESSAGE_A1017);
 	}
 
 	return true;
